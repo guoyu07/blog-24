@@ -1,2 +1,3 @@
-var myModule = require("./module1.js");
-myModule.sayHello();
+var module1 = require('./module1');
+
+console.log(module1);

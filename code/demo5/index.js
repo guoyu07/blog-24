@@ -1,6 +1,2 @@
-var myModule = require('my_module1');
-
-console.log('module.exports:');
-console.log(module.exports);
-
+var myModule = require("./module1.js");
 myModule.sayHello();

@@ -1,5 +1,3 @@
-exports = {
-    sayHello: function () {
-        console.log("sayHello method!");
-    }
+exports.sayHello = function () {
+    console.log("sayHello method!");
 };
