@@ -79,6 +79,7 @@ exports和module这两个对象是所有Node.js类型的文件中都默认隐式
 		}
 		module.exports.nameVar = nameVar;
 		exports.sayHelloMethod = sayHelloMethod;
+		//exports.xxx只是module.exports.xxx的缩写
 		
 	模块中通过给**module.exports添加属性**的方式把nameVar变量导出，通过给**exports添加属性**的方式把sayHelloMethod方法导出
 	
