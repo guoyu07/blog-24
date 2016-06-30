@@ -1,8 +1,8 @@
 #nodejs之module.exports与exports
-*注：代码目录根目录为lunachi_git/blog/code/nodejs,以下所有提到的代码都是在这个目录下*
+*注：代码根目录为lunachi_git/blog/code/nodejs*
 
 ##module.exports和exports的作用
-　　node模块允许从被引入文件中选择要暴露给程序的函数和变量，这是就需要用到module.exports与exports。
+　　node模块允许从被引入文件中选择要暴露给程序的函数和变量，这就需要用到module.exports与exports。
 
 ##module、module.exports、exports是什么？
 下面我们通过代码来分析：
@@ -38,8 +38,8 @@ exports和module这两个对象是所有Node.js类型的文件中都默认隐式
 
 **可以看到，demo1/index.js中并未声明exports和module对象，但是它们确实存在。并且可以看到，module.exports和exports的初始值是{}，而module的初始值有一大串属性，其中还包含一个exports属性，它的初始值也是{}。**
 
-##如果导出模块中的变量或方法，怎样使用模块？
-如果导出模块中的变量或方法，下面通过代码举例来说明：
+##如何导出模块中的变量或方法，怎样使用模块？
+如何导出模块中的变量或方法，下面通过代码举例来说明：
 
 1. 创建demo2/module1.js
 
@@ -124,7 +124,7 @@ exports和module这两个对象是所有Node.js类型的文件中都默认隐式
 	nameVar 变量
 	sayHelloMethod 方法!
 
-**通过以上代码可以看到，通过module.exports、给module.exports添加属性、给exports添加属性都可以讲模板内的变量和方法暴露给require模块的程序使用**
+**通过以上代码可以看到，通过module.exports、给module.exports添加属性、给exports添加属性都可以将模板内的变量和方法暴露给require模块的程序使用**
 
 ##那什么时候使用module.exports？什么时候使用exports呢？
 
@@ -141,7 +141,7 @@ exports和module这两个对象是所有Node.js类型的文件中都默认隐式
 	     
 exports、module.exports、module三者之间的引用关系图如下：
 
-![exports与module.exports引用关系1](../images/nodejs之exports与module.exports引用关系1.png =250x)
+![exports与module.exports引用关系1](../images/nodejs之exports与module.exports引用关系1.png)
 
 通过代码验证一下，创建demo3/index.js文件：
 
@@ -183,7 +183,7 @@ exports、module.exports、module三者之间的引用关系图如下：
 
 在module1.js文件中我们在exports的基础上为它添加了一个属性sayHello，这个属性的值是一个函数，并且因为初始时，exports指向的是module.exports，他俩共享同一块内存，所以这个操作后，module.exports变成了这样：
 
-![exports与module.exports引用关系2](../images/nodejs之exports与module.exports引用关系2.png =300x)
+![exports与module.exports引用关系2](../images/nodejs之exports与module.exports引用关系2.png)
 
 所以，index.js文件中的module1变量的值为：
 
@@ -233,7 +233,7 @@ exports、module.exports、module三者之间的引用关系图如下：
 
 module1.js文件中将exports重新赋值为一个新的对象，这个时候exports将会自己分配一块新的内存，而不再指向module.exports了，所以这个时候exports和module.exports彻底断绝关系，无论你怎么操作exports对象，都与module.exports无关了。
 
-![exports与module.exports引用关系3](../images/nodejs之exports与module.exports引用关系3.png =400x)
+![exports与module.exports引用关系3](../images/nodejs之exports与module.exports引用关系3.png)
 
 ####例子3
 >如果创建了一个`既有exports又有module.exports`的模块，那它会返回module.exports，而export会被忽略。
