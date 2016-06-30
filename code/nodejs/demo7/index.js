@@ -16,3 +16,14 @@ channel.on('join', function () {
 
 //用emit函数发射这个事件
 channel.emit('join');
+
+function asyncFun(callback) {
+    setTimeout(callback, 200);
+}
+var color = 'blue';
+(function (color) {
+    asyncFun(function () {
+        console.log('The color is' + color);
+    })
+})(color);
+color = 'green';
