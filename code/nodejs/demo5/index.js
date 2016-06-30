@@ -1,6 +1,6 @@
-var myModule = require('my_module1');
+var module1 = require('./module1');
 
 console.log('module.exports:');
 console.log(module.exports);
 
-myModule.sayHello();
+module1.sayHello();
