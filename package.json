@@ -22,6 +22,8 @@
   "dependencies": {
     "htmlparser": "^1.7.7",
     "nimble": "0.0.2",
-    "request": "^2.72.0"
+    "request": "^2.72.0",
+    "seq": "^0.3.5",
+    "step": "0.0.6"
   }
 }

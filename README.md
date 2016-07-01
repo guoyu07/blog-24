@@ -10,12 +10,31 @@
 - react
 - react native
 
+<br>
+node内置模块：
+
+- http
+- fs
+- events
+- net
 
 
 
+<br>
 npm模块介绍
-- nimber流程控制工具
+
+- nimber流程控制工具 类似的还有step和seq
 - request模块是经过简化的HTTP客户端
 - htmlpaser模块把数据转换成Javascript数据结构
+
+<br>
+参考： 
+
+[http://mwn-notes.github.io/node/](http://mwn-notes.github.io/node/)
+
+[http://nodeschool.io/zh-cn/#workshopper-list](http://nodeschool.io/zh-cn/#workshopper-list)
+
+[https://github.com/jimuyouyou/node-interview-questions#nodeAdvanced](https://github.com/jimuyouyou/node-interview-questions#nodeAdvanced)
+
 
 	
