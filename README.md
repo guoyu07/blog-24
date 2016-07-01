@@ -9,4 +9,13 @@
 	- [模块查找](./MD/nodejs之模块查找.md)
 - react
 - react native
+
+
+
+
+npm模块介绍
+- nimber流程控制工具
+- request模块是经过简化的HTTP客户端
+- htmlpaser模块把数据转换成Javascript数据结构
+
 	

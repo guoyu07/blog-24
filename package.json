@@ -18,5 +18,10 @@
   "bugs": {
     "url": "https://github.com/lunachi/blog/issues"
   },
-  "homepage": "https://github.com/lunachi/blog#readme"
+  "homepage": "https://github.com/lunachi/blog#readme",
+  "dependencies": {
+    "htmlparser": "^1.7.7",
+    "nimble": "0.0.2",
+    "request": "^2.72.0"
+  }
 }
