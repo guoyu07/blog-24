@@ -235,10 +235,10 @@ options \<object> 需要解析的url查询字符串 选填
 命令行执行node回车，输入下面代码：
 	
 	querystring.parse('foo=bar&abc=xyz&abc=123&name=张', null, null, {
-    decodeURIComponent: function (value) {
-        return querystring.escape(value);
-    }
-});
+	    decodeURIComponent: function (value) {
+	        return querystring.escape(value);
+	    }
+	});
 	
 输出：
 
