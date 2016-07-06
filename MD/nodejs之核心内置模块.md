@@ -155,27 +155,13 @@ URL路径处理
 
 #####例
 
-	url.resolve('/one/two/three', 'four'); 
-	// '/one/two/four'
-	
-	url.resolve('/one/two/three', './four'); 
-	// '/one/two/four'
-	
-	url.resolve('/one/two/three', '../four'); 
-	// '/one/four'
-	
-	url.resolve('/one/two/three', '../../four'); 
-	// '/four'
-	
-	url.resolve('http://example.com/', '/one');
-	// 'http://example.com/one'	
-	
-	url.resolve('http://example.com/one', '/two');
-	// 'http://example.com/two'
-	
-	url.resolve('http://example.com/one/two/three', '../four');
-	// 'http://example.com/one/four'
-	
+	url.resolve('/one/two/three', 'four'); // '/one/two/four'
+	url.resolve('/one/two/three', './four'); // '/one/two/four'
+	url.resolve('/one/two/three', '../four'); // '/one/four'
+	url.resolve('/one/two/three', '../../four'); // '/four'
+	url.resolve('http://example.com/', '/one'); // 'http://example.com/one'	
+	url.resolve('http://example.com/one', '/two'); // 'http://example.com/two'
+	url.resolve('http://example.com/one/two/three', '../four'); // 'http://example.com/one/four'
 	url.resolve('http://example.com/', 'http://other.com'); 
 	// 'http://other.com/'
 
