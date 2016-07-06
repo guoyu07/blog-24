@@ -162,8 +162,7 @@ URL路径处理
 	url.resolve('http://example.com/', '/one'); // 'http://example.com/one'	
 	url.resolve('http://example.com/one', '/two'); // 'http://example.com/two'
 	url.resolve('http://example.com/one/two/three', '../four'); // 'http://example.com/one/four'
-	url.resolve('http://example.com/', 'http://other.com'); 
-	// 'http://other.com/'
+	url.resolve('http://example.com/', 'http://other.com'); // 'http://other.com/'
 
 
 ##<span id='querystring_module'>Query String模块</span>
