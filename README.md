@@ -7,6 +7,7 @@
 - nodejs
 	- [exports和module.exports](./MD/nodejs之exports和module.exports.md)
 	- [模块查找](./MD/nodejs之模块查找.md)
+	- [nodejs之核心内置模块](./MD/nodejs之核心内置模块.md)
 - react
 - react native
 
