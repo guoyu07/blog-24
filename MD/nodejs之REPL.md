@@ -123,14 +123,16 @@ REPL的优势在于：
 
 ##定制repl
 ###例1
-创建文件repl_test.js，代码如下：
+创建文件repl.js，代码如下：
 
-	var repl = require("repl");
-	repl.start("> ").context.m = "message";
+	const repl = require('repl');
+	var msg = 'message';
+	
+	repl.start('> ').context.m = msg;
 
 命令行运行：
 	
-	node repl_test
+	node repl.js
 	
 输出：
 	
@@ -141,7 +143,44 @@ REPL的优势在于：
 	> m
 	'message'
 	>
+但此时m并不是一个只读的属性，可随时修改m的赋值，如下代码所示：
+
+	> m
+	'message'
+	> m="重新赋值m"
+	'重新赋值m'
+	> m
+	'重新赋值m'
+	>
 	
+以上代码并不是我们想看到的，所以通过Object.defineProperty()将m设置为只读：
+
+	const repl = require('repl');
+	var msg = 'message';
+	
+	const r = repl.start('> ');
+	const c = r.context;
+	
+	Object.defineProperty(c, 'm', {
+	    configurable: false,
+	    enumerable: true,
+	    value: msg
+	});
+	
+命令行运行：
+	
+	node repl.js
+	
+输出：
+
+	> m
+	'message'
+	> m="重新赋值m"
+	'重新赋值m'
+	> m
+	'message'
+	>
+
 ###例2
 通过nodejs命令行和REPL来测试模块代码
 
@@ -248,3 +287,24 @@ REPL的优势在于：
 	> rma(2,4);
 	200 + 2 + 4 = 206
 	206
+	
+##repl.start([options])
+repl.start()方法创建和开始一个repl.REPLServer实例。
+参数：
+
+options \<Object>
+
+- prompt \<String> 输入提示，默认 > 
+- input \<Readable> 输入流，默认process.stdin.
+- output <Writable> 输出流，默认process.stdout.
+- terminal \<boolean> 
+- eval \<Function> 对每行的输入求值. 默认JavaScript eval()
+- useColors <boolean> 
+- useGlobal <boolean> 如果设定为true，那么repl就会使用global对象而不是在一个独立环境里运行脚本。默认为false。
+- ignoreUndefined <boolean> 如果设定为true，那么repl将不会输出未定义命令的返回值。默认为false。
+- writer <Function> 每一个命令被求值时都会调用此函数，而该函数会返回显示的格式（包括颜色）。默认为util.inspect.
+- replMode :
+	- repl.REPL_MODE_SLOPPY - sloppy mode.
+	- repl.REPL_MODE_STRICT - strict mode. 
+	- repl.REPL_MODE_MAGIC - default mode.
+	- breakEvalOnSigint
