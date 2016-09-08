@@ -1,5 +1,11 @@
 #nodejs之文件系统
-fs是filesystem的缩写，该模块提供本地文件的读写能力，基本上是POSIX文件操作命令的简单包装。但是，这个模块几乎对所有操作提供异步和同步两种操作方式，供开发者选择，例如读取文件内容的函数有异步的fs.readFile()和同步的fs.readFileSync()。
+fs是filesystem的缩写，该模块提供本地文件的读写能力，基本上是POSIX文件操作命令的简单包装。但是，这个模块几乎对所有操作提供异步和同步两种操作方式，供开发者选择.
+
+异步方法最后一个参数都是回调函数，这个回调的参数取决于方法，不过第一个参数一般都是异常。如果操作成功，那么第一个参数就是 null 或 undefined。
+
+当使用一个同步操作的时候，任意的异常都立即抛出，可以用 try/catch 来处理异常，使得程序正常运行。
+
+例如读取文件内容的函数有异步的fs.readFile()和同步的fs.readFileSync()。
 
 例：
 
@@ -7,16 +13,64 @@ fs是filesystem的缩写，该模块提供本地文件的读写能力，基本�
 	
 	// 异步读取
 	fs.readFile('input.txt', function (err, data) {
-	   if (err) {
-	       return console.error(err);
-	   }
-	   console.log("异步读取: " + data.toString());
+	    if (err) {
+	        return console.error(err);
+	    }
+	    console.log("异步读取: " + data.toString());
 	});
 	
 	// 同步读取
-	var data = fs.readFileSync('input.txt');
-	console.log("同步读取: " + data.toString());
+	try {
+	    var data = fs.readFileSync('input.txt');
+	    console.log("同步读取: " + data.toString());
+	} catch (err) {
+	    console.error(err);
+	}
+	
 	console.log("程序执行完毕。");
+	
+使用相对路径时，路径是相对 `process.cwd()` 来说的。
+
+大部分 fs 函数会忽略回调参数，如果忽略，将会用默认函数抛出异常。如果想得到原调用点的堆栈信息，需要设置环境变量 `NODE_DEBUG`。
+
+例，创建文件fsomitcallback.js，代码如下：
+
+	require('fs').readFile('/');
+	
+命令行运行：
+
+	node fsomitcallback.js
+
+输出：
+
+	fs.js:95
+      throw err;  // Forgot a callback but don't know where? Use NODE_DEBUG=fs
+      ^
+	
+	Error: EISDIR: illegal operation on a directory, read
+	    at Error (native)
+	    
+此时无法看错异常的根源，命令行再运行：
+
+	env NODE_DEBUG=fs node fsomitcallback.js
+	
+输出：
+
+	fs.js:88
+	        throw backtrace;
+	        ^
+	
+	Error: EISDIR: illegal operation on a directory, read
+	    at rethrow (fs.js:83:21)
+	    at maybeCallback (fs.js:101:42)
+	    at Object.fs.readFile (fs.js:266:18)
+	    at Object.<anonymous> (/opt/lunachi_git/blog/code/nodejs/fsomitcallback.js:1:77)
+	    at Module._compile (module.js:541:32)
+	    at Object.Module._extensions..js (module.js:550:10)
+	    at Module.load (module.js:456:32)
+	    at tryModuleLoad (module.js:415:12)
+	    at Function.Module._load (module.js:407:3)
+	    at Function.Module.runMain (module.js:575:10)
 
 ##导入文件系统模块(fs)
 	
