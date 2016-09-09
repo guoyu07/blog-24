@@ -115,5 +115,146 @@ entry.js
 Webpack 会分析入口文件，解析包含依赖关系的各个文件。这些文件（模块）都打包到 bundle.js 。**Webpack 会给每个模块分配一个唯一的 id 并通过这个 id 索引和访问模块。**在页面启动时，会先执行 entry.js 中的代码，其它模块会在运行 require 的时候再执行。
 
 ###Loader
+Loader 可以理解为是模块和资源的转换器，它本身是一个函数，接受源文件作为参数，返回转换的结果。这样，我们就可以通过 require 来加载任何类型的模块或文件。
+
+####loader 特性
+
+- Loader 可以通过管道方式链式调用，每个 loader 可以把资源转换成任意格式并传递给下一个 loader ，但是最后一个 loader 必须返回 JavaScript。
+- Loader 可以同步或异步执行。
+- Loader 运行在 node.js 环境中，所以可以做任何可能的事情。
+- Loader 可以接受参数，以此来传递配置项给 loader。
+- Loader 可以通过文件扩展名（或正则表达式）绑定给不同类型的文件。
+- Loader 可以通过 npm 发布和安装。
+- 除了通过 package.json 的 main 指定，通常的模块也可以导出一个 loader 来使用。
+- Loader 可以访问配置。
+- 插件可以让 loader 拥有更多特性。
+- Loader 可以分发出附加的任意文件。
+
+Loader 本身也是运行在 node.js 环境中的 JavaScript 模块，它通常会返回一个函数。大多数情况下，我们通过 npm 来管理 loader，但是你也可以在项目中自己写 loader 模块。
+
+按照惯例，而非必须，loader 一般以 xxx-loader 的方式命名，xxx 代表了这个 loader 要做的转换功能，比如 json-loader。
+
+在引用 loader 的时候可以使用全名 json-loader，或者使用短名 json。这个命名规则和搜索优先级顺序在 webpack 的 resolveLoader.moduleTemplates api 中定义。
+
+	Default: ["*-webpack-loader", "*-web-loader", "*-loader", "*"]
+
+Loader 可以在 require() 引用模块的时候添加，也可以在 webpack 全局配置中进行绑定，还可以通过命令行的方式使用。
+
+接上一节的例子，我们要在页面中引入一个 CSS 文件 style.css，首页将 style.css 也看成是一个模块，然后用 css-loader 来读取它，再用 style-loader 把它插入到页面中。
+
+	/* style.css */
+	body { background: yellow; }
+
+修改 entry.js：
+
+	require("!style!css!./style.css") // 载入 style.css
+	document.write('It works.')
+	document.write(require('./module.js'))
+
+安装 loader：
+
+	npm install css-loader style-loader
+
+重新编译打包:
+
+	webpack entry.js bundle.js
+	
+刷新页面，就可以看到黄色的页面背景了。
+
+如果每次 require CSS 文件的时候都要写 loader 前缀，是一件很繁琐的事情。我们可以根据模块类型（扩展名）来自动绑定需要的 loader。
+
+将 entry.js 中的 require("!style!css!./style.css") 修改为 require("./style.css") ，然后执行：
+
+	$ webpack entry.js bundle.js --module-bind 'css=style!css'
+
+	# 有些环境下可能需要使用双引号
+	$ webpack entry.js bundle.js --module-bind "css=style!css"
+
+显然，这两种使用 loader 的方式，效果是一样的。
 
 ###配置文件webpack.config.js
+Webpack 在执行的时候，除了在命令行传入参数，还可以通过指定的配置文件来执行。默认情况下，会搜索当前目录的 webpack.config.js 文件，这个文件是一个 node.js 模块，返回一个 json 格式的配置信息对象，或者通过 --config 选项来指定配置文件。
+
+在根目录创建 package.json 来添加 webpack 需要的依赖：
+
+	{
+	  "name": "webpack-example",
+	  "version": "1.0.0",
+	  "description": "A simple webpack example.",
+	  "main": "bundle.js",
+	  "scripts": {
+	    "test": "echo \"Error: no test specified\" && exit 1"
+	  },
+	  "keywords": [
+	    "webpack"
+	  ],
+	  "author": "veya",
+	  "license": "MIT",
+	  "devDependencies": {
+	    "css-loader": "^0.25.0",
+	    "style-loader": "^0.13.1",
+	    "webpack": "^1.13.2"
+	  }
+	}
+	
+如果没有写入权限，请尝试如下代码更改权限
+
+	chflags -R nouchg .
+	sudo chmod  775 package.json
+	
+然后创建一个配置文件 webpack.config.js：
+
+//引入webpack
+	var webpack = require('webpack');
+	
+	module.exports = {
+	    /**
+	     * 入口：要进行处理的实例（js）
+	     */
+	    entry: './entry.js',
+	    /**
+	     * 出口：输出配置
+	     * path: 输出到哪个目录
+	     * filename: 实例最终输出的名字
+	     */
+	    output: {
+	        path: __dirname,
+	        filename: 'bundle.js'
+	    },
+	    module: {
+	        /**
+	         * 通过使用不同的loader，webpack通过调用外部的脚本或工具可以对各种各样的格式的文件进行处理
+	         * Loaders需要单独安装并且需要在webpack.config.js下的modules关键字下进行配置
+	         * 属性:
+	         *  test: 一个匹配loaders所处理的文件的拓展名的正则表达式（必须）
+	         *  loader: loader的名称（必须）
+	         *  include/exclude: 手动添加必须处理的文件（文件夹）或屏蔽不需要处理的文件（文件夹）（可选）
+	         *  query: 为loaders提供额外的设置选项（可选）
+	         *
+	         * css-loader使你能够使用类似@import 和 url(...)的方法实现 require()的功能,
+	         * style-loader将所有的计算后的样式加入页面中，
+	         * 二者组合在一起使你能够把样式表嵌入webpack打包后的JS文件中。
+	         * 首先npm安装css, style的loader: npm install --save-dev style-loader css-loader
+	         * style!css中的感叹号的作用在于使同一文件能够使用不同类型的loader
+	         */
+	        loaders: [
+	            {test: /\.css$/, loader: 'style!css'}
+	        ]
+	    }
+	}
+
+同时简化 entry.js 中的 style.css 加载方式：
+
+	require('./style.css')
+
+最后命令行运行
+
+	 webpack
+	 
+可以看到 webpack 通过配置文件执行的结果和上面通过命令行
+	
+	webpack entry.js bundle.js --module-bind 'css=style!css' 
+	
+执行的结果是一样的。
+
+###插件
