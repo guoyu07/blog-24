@@ -11,13 +11,26 @@ Webpack 中文指南:
 webpack-dev-server:    
 [http://www.cnblogs.com/hhhyaaon/p/5664002.html](http://www.cnblogs.com/hhhyaaon/p/5664002.html)
 
+webpack指南:   
+[http://webpack.toobug.net/zh-cn/](http://webpack.toobug.net/zh-cn/)
+
+Webpack 怎么用:   
+[https://segmentfault.com/a/1190000002552008](https://segmentfault.com/a/1190000002552008)
+
+Webpack 入门指迷:   
+[https://segmentfault.com/a/1190000002551952](https://segmentfault.com/a/1190000002551952)
+
 ##Webpack
 >Webpack 是一个模块打包器。它将根据模块的依赖关系进行静态分析，然后将这些模块按照指定的规则生成对应的静态资源。
+
+Webpack就是个模块打包工具，将模块及其依赖打包生成静态资源。在Webpack的机制里，所有的资源都是模块(js,css,图片等)，而且可以通过代码分隔(Code Splitting)的方法异步加载，实现性能上的优化。
+
 
 ###解决什么问题?
 `文件依赖管理`
 
 如何在一个大规模的代码库中，维护各种模块资源的分割和存放，维护它们之间的依赖关系，并且无缝的将它们整合到一起生成适合浏览器端请求加载的静态资源。
+
 
 ###webpack的工作方式
 把你的项目当做一个整体，通过一个给定的主文件（如：index.js），Webpack将从这个文件开始找到你的项目的所有依赖文件，使用loaders处理它们，最后打包为一个浏览器可识别的JavaScript文件。
@@ -122,7 +135,7 @@ entry.js
 	   
 Webpack 会分析入口文件，解析包含依赖关系的各个文件。这些文件（模块）都打包到 bundle.js 。**Webpack 会给每个模块分配一个唯一的 id 并通过这个 id 索引和访问模块。**在页面启动时，会先执行 entry.js 中的代码，其它模块会在运行 require 的时候再执行。
 
-###配置文件webpack.config.js
+###配置文件[webpack.config.js](http://webpack.github.io/docs/configuration.html)
 Webpack 在执行的时候，除了在命令行传入参数，还可以通过指定的配置文件来执行。默认情况下，会搜索当前目录的 webpack.config.js 文件，这个文件是一个 node.js 模块，返回一个 json 格式的配置信息对象，或者通过 --config 选项来指定配置文件。
 
 在根目录创建 package.json 来添加 webpack 需要的依赖：
@@ -158,15 +171,7 @@ Webpack 在执行的时候，除了在命令行传入参数，还可以通过指
 	var webpack = require('webpack');
 	
 	module.exports = {
-	    /**
-	     * 入口：要进行处理的实例（js）
-	     */
 	    entry: './entry.js',
-	    /**
-	     * 出口：输出配置
-	     * path: 输出到哪个目录
-	     * filename: 实例最终输出的名字
-	     */
 	    output: {
 	        path: __dirname,
 	        filename: 'bundle.js'
@@ -176,6 +181,27 @@ Webpack 在执行的时候，除了在命令行传入参数，还可以通过指
 最后命令行运行
 
 	 webpack
+	 
+####output配置项
+#####filename
+output.filename指定具体的文件名。
+
+output.filename除了可以指定具体的文件名以外，还可以使用一些占位符，包括：
+
+- name 模块名称
+- hash 模块编译后的（整体）Hash值
+- chunkhash 分片的Hash值
+
+使用的方式就是在output.filename的中使用[name].js或者my-[name]-[hash].js之类的，一看就明白。
+
+chunkhash的使用：我们一次有可能要打包很多模块，而不止是一个js文件，因此会碰到支持多个入口文件（entry）的情况，每一个入口都需要有自己的名字，具体对应entry的写法而言，有如下几种情况：
+
+	entry:'./example2.1'
+	// 或者
+	entry:['./example2.1','./example2.2']
+	
+这种情况下，模块是没有名字的，webpack会使用main作为模块名字，因此像下面这种用数组来指定入口的情况，模块名会重复，而此时webpack会将它们的代码合并打包！
+
 
 ####生成Source Maps
 打包后的文件有时候你是不容易找到出错了的地方对应的源代码的位置的，Source Maps就是来帮我们解决这个问题的。 通过简单的配置后，Webpack在打包时可以为我们生成的source maps，这为我们提供了一种对应编译文件和源文件的方法，使得编译后的代码可读性更高，也更容易调试。
@@ -195,10 +221,51 @@ Webpack 在执行的时候，除了在命令行传入参数，还可以通过指
 	        filename: 'bundle.js'
 	    }
 	};
+	
+###编译环境判断
+我们需要根据当前的编译环境来选择不同的资源输出方式。编译环境的判断可以通过定义node的script来设置环境变量。在我们项目根目录的package.json文件中，定义：
+ 
+	"scripts": { 
+		"dev": "webpack-dev-server", 
+		"build": "webpack", 
+		"deploy": "set NODE_ENV=production&&webpack -p --progress --colors" 
+	}, 
+	
+这样的话，终端执行"npm run dev" 就相当于执行 "webpack-dev-server"。如果执行"npm run deploy"，那就是编译生产环境，node就会设置环境变量"NODE_ENV"为"production"。然后在webpack的配置文件中，通过"process.env.NODE_ENV"就可以读取到"production"这个值。所以在配置的开头，我们这样定义一个局部变量: 
 
+	var prod = process.env.NODE_ENV === 'production' ? true : false; 
+
+之后在配置文件的最后，根据当前的编译环境，如果是生产环境就配置引用压缩丑化插件"UglifyJsPlugin"，如果是开发环境就配置webpack-dev-server： 
+
+	// 判断开发环境还是生产环境,添加uglify等插件 
+	if (process.env.NODE_ENV === 'production') {
+		module.exports.plugins = (module.exports.plugins || [])
+			.concat([
+				new webpack.DefinePlugin({
+					__DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false')) 
+				}), 
+				new webpack.optimize.UglifyJsPlugin({ 
+					compress: { warnings: false } 
+				}), 
+				new webpack.optimize.OccurenceOrderPlugin(), 
+			]); 
+	} else { 
+		module.exports.devtool = 'source-map'; 
+		module.exports.devServer = { 
+			port: 8080, 
+			contentBase: './build', 
+			hot: true, 
+			historyApiFallback: true, 
+			publicPath: "", 
+			stats: { 
+				colors: true 
+			}, 
+			plugins: [ new webpack.HotModuleReplacementPlugin() ] 
+		}; 
+	} 
 
 ###Loader
-Loader 可以理解为是模块和资源的转换器，它本身是一个函数，接受源文件作为参数，返回转换的结果。这样，我们就可以通过 require 来加载任何类型的模块或文件。
+Loader 可以理解为是模块和资源的转换器，由于在webpack里，所有的资源都是模块，不同资源都最终转化成js去处理。针对不同形式的资源采用不同的Loader去编译，这就是Loader的意义。它本身是一个函数，接受源文件作为参数，返回转换的结果。这样，我们就可以通过 require 来加载任何类型的模块或文件。
 
 通过使用不同的loader，webpack通过调用外部的脚本或工具可以对各种各样的格式的文件进行处理。
 
@@ -347,8 +414,6 @@ CSS modules 的技术就意在把JS的模块化思想带入CSS中来，通过CSS
 	var datas = require("./datas.json");
 	
 	document.write("<div class='" + styles.wrap + "'>" + datas.msg + "</div><br/>");
-	
-####CSS预处理器
 
 ####json-loader
 首先安装json loader:
@@ -400,6 +465,45 @@ CSS modules 的技术就意在把JS的模块化思想带入CSS中来，通过CSS
 	It works!
 	It is module!
 	
+####url-loader
+安装：
+	
+	npm install --save-dev url-loader file-loader
+
+注：url-loader, file-loader。两个都必须用上。否则超过大小限制的图片无法生成到目标文件夹中。
+	
+修改webpack-config.js配置url loader:
+
+	var webpack = require('webpack');
+	
+	module.exports = {
+	    entry: './entry.js',
+	    output: {
+	        path: __dirname,
+	        filename: 'bundle.js'
+	    },
+	    module: {
+	        loaders: [
+				{test: /\.css$/, loader: 'style!css'},
+            	{test: /\.json/, loader: 'json'},
+            	{test: /\.(png|jpg|jpeg|gif)$/, loader: 'url?limit=10000&name=images/[name].[ext]'} //url-loader配置
+	        ]
+	    }
+	}
+	
+匹配到png或jpg或gif结尾的文件就采用url-loader来做对应的编译。`由于loader都是默认以-loader后缀结尾的，所以可以省略后缀"-loader"，直接写成url。`**问号后面是参数(?limit=10000&name=images/[name].[ext])，表示10000B以下的图片直接压缩成base64编码，超过10000B的图片输出到"images/文件名.拓展名"。**
+
+上面的url loader配置也可以这样写： 
+
+	{ 
+		test: /\.(png|jpg|jpeg|gif)$/, 
+		loader: 'url-loader', 
+		query:{
+			limit:'10000',
+			name:'images/[name].[ext]' 
+		} 
+	}
+
 ####Babel
 Babel其实是一个编译JavaScript的平台，它的强大之处表现在可以通过编译帮你达到以下目的：
 
@@ -631,6 +735,33 @@ Webpack 的配置提供了 `resolve` 和 `resolveLoader` 参数来设置**模块
 
 Webpack 中涉及路径配置最好使用绝对路径，建议通过 path.resolve(\_\_dirname, "app/folder") 或 path.join(\_\_dirname, "app", "folder") 的方式来配置，以兼容 Windows 环境。
 
+###运行命令
+	webpack --config XXX.js   //使用另一份配置文件（比如webpack.config2.js）来打包
+	webpack --watch   //监听变动并自动打包
+	webpack -p    //压缩混淆脚本，这个非常非常重要！
+	webpack -d    //生成map映射文件，告知哪些模块被最终打包到哪里了
+	
+###相关概念
+####Chunk
+chunk是使用Webpack过程中最重要的几个概念之一。在Webpack打包机制中，编译的文件包括entry（入口，可以是一个或者多个资源合并而成，由html通过script标签引入）和chunk（被entry所依赖的额外的代码块，同样可以包含一个或者多个文件）。从页面加速的角度来讲，我们应该尽可能将所有的js打包到一个bundle.js之中，但是总会有一些功能是使用过程中才会用到的。出于性能优化的需要，对于这部分资源我们可以做成按需加载，通过require.ensure方法实现: 
+
+	require.ensure([], function(require) { 
+		var dialog = require('./components/dialog'); 
+		// todo ... 
+	}); 
+	
+而固定的公用代码则独立打包到trunk之中。在Webpack的配置中，我们可以通过CommonsChunkPlugin插件对指定的chunks进行公共模块的提取。我们指定好生成文件的名字，以及想抽取哪些入口js文件的公共代码，webpack就会自动帮我们合并好。
+
+	var chunks = Object.keys(entries); 
+	plugins: [ 
+		new webpack.optimize.CommonsChunkPlugin({ 
+			name: 'vendors', // 将公共模块提取，生成名为`vendors`的chunk
+			chunks: chunks,
+			minChunks: chunks.length // 提取所有entry共同依赖的模块 
+		})
+	],
+
+
 ###高级
 ####CommonJS规范
 CommonJS 是以在浏览器环境之外构建 JavaScript 生态系统为目标而产生的项目，比如在服务器和桌面环境中。
@@ -717,3 +848,30 @@ factory 是最后一个参数，它包裹了模块的具体实现，它是一个
 	    var $ = require('jquery');
 	    $('body').text('hello world');
 	});
+
+
+##webpack CLI（Command Line Interface命令行用户界面）
+
+	webpack <entry> <output>
+	
+说明：
+
+- entry
+- output   
+	path   
+	filename   
+
+一般会将配置项写在同目录的webpack.config.js中，然后执行webpack即可，webpack会从该配置文件中读取参数，此时不需要在命令行中传入任何参数。# 执行时webpack会去寻找当前目录下的webpack.config.js当作配置文件使用
+	
+	webpack
+
+	# 也可以用参数-c指定配置文件
+	webpack -c mycofnig.js
+	
+配置文件webpack.config.js的写法则是：
+
+	module.exports = {
+	    // 配置项
+	};
+	
+值得注意的是，配置文件是一个真正的JS文件，因此配置项只要是一个对象即可，并不要求是JSON。也就意味着你可以使用表达式，也可以进行动态计算，或者甚至使用继承的方式生成配置项。
