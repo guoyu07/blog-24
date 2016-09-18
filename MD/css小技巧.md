@@ -180,3 +180,24 @@
 参考：
 
 [http://www.zcfy.cc/article/70-expert-ideas-for-better-css-coding-hackhands-1078.html#17](http://www.zcfy.cc/article/70-expert-ideas-for-better-css-coding-hackhands-1078.html#17)
+
+##浏览器渲染原理
+例：
+
+	<div class="box">
+	  <img src="1.jpg">
+	  <span class="text">红色背景是父级</span>
+	</div>
+	
+	.box {
+	  display: inline-block;
+	  white-space: nowrap;
+	  background-color: #cd0000;
+	}
+	.text {
+	  display: inline-block;
+	  width: 100%;
+	  background-color: #34538b;
+	  color: #fff;
+	}
+首先，先下载文档内容，加载头部的样式资源（如果有），然后按照从上而下，自外而内的顺序渲染DOM内容。套用本例就是，先渲染父元素，后渲染子元素，是有个先后顺序的。因此当渲染到父元素的时候，子元素的width:100%并没有渲染，所以，宽度就是图片加文字内容的宽度；等渲染到文字这个子元素的时候，父元素宽度已经固定，此时的width:100%就是已经固定好的父元素的宽度，宽度不够怎么办？溢出就好了，overflow属性就是为此而生的。

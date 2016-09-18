@@ -47,5 +47,16 @@ https://developers.google.com/chrome-developer-tools/?hl=zh-cn
 
 ![](../images/chrome-devtools-styles.jpg)
 
+##Profiles
+Profiles用来更深入的分析性能问题、内存问题。
+
+![](../images/chrome-devTools-profiles.png)
+
+主要功能：
+
+- Record JavaScript CPU Profile：用于找出耗时较长的JS函数
+- Take Heap Snapshot：用于分析JS对象及其关联的DOM节点的内存分布
+- Record Allocation Timeline：记录内存分配信息，用于分析内存泄露的情况
+- Record Allocation Profile
 
 

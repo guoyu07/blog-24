@@ -182,8 +182,12 @@ Webpack 在执行的时候，除了在命令行传入参数，还可以通过指
 
 	 webpack
 	 
+####entry配置项
+webpack入口文件配置，可支持一个入口文件或多个入口文件 entry: \<string>|\<array>|\<object>
+
+
 ####output配置项
-#####filename
+#####output.filename
 output.filename指定具体的文件名。
 
 output.filename除了可以指定具体的文件名以外，还可以使用一些占位符，包括：
@@ -201,6 +205,64 @@ chunkhash的使用：我们一次有可能要打包很多模块，而不止是�
 	entry:['./example2.1','./example2.2']
 	
 这种情况下，模块是没有名字的，webpack会使用main作为模块名字，因此像下面这种用数组来指定入口的情况，模块名会重复，而此时webpack会将它们的代码合并打包！
+
+另一种是webpack比较推荐的多入口写法：
+
+	entry:{
+	    'example2.1':'example2.1.js',
+	    'example2.2':'example2.2.js'
+	}
+	
+这种写法中，名字和模块文件名一一对应，每个模块都有独立的名字。因此这里的[name]可以理解成模块名字。
+
+分片chunk：所谓分片就是指一个入口模块的代码有可能会被分成多个文件，还有一些文件可能是来自模块的公共代码，而不是入口模块。
+
+[hash]和[chunkhash]，一个是指本次打包相关的整体的hash，一个是指分片的hash。
+
+#####output.path
+有时候我们希望输出的文件不在当前目录（其实大部分时候都是这样），比如源码在src目录，输出的文件在dist目录，此时就需要用到output.path来指定输出路径。
+
+output.path也可以使用占位符。
+
+	entry:{
+	    'example4.1':'src/example4.1'
+	},
+	otuput:{
+	    filename:'[name].js',
+	    path:'./dist'
+	}
+
+文件会打包到dist/example4.1.js。
+
+如果你的模块是存放在子目录中的，而你又想保持这种目录结构到打包后的dist中，怎么办？
+
+	src/
+	    example4.1.js
+	    hello/
+	        example4.2.js
+
+希望打包之后是这样：
+
+	dist/
+	    example4.1.js
+	    hello/
+	        example4.2.js
+
+这种情况下，子目录并不能由output.path配置而来，而应该将目录写到模块名上，配置文件变成这样：
+
+	entry:{
+	    'example4.1':'./src/example4.1',
+	    'hello/example4.2':'./src/hello/example4.2'
+	},
+	output:{
+	    filename:'[name].js',
+	    path:'./dist'
+	}
+
+注意这里的filename一定要包含[name]才行，因为路径信息是带在模块名上的。
+
+#####output.publicPath
+这个选项适用于各种非入口文件的场景，包括分片后的文件、loader加载文件时的路径、css中引入的图片资源文件路径等等。
 
 
 ####生成Source Maps
@@ -577,6 +639,28 @@ Webpack 本身内置了一些常用的插件，还可以通过 npm 安装第三�
 	/******/ 	var installedModules = {};
 	// 后面代码省略
 	
+####CommonsChunkPlugin（内置） 提取代码中的公共模块
+Common Chunks 插件的作用就是提取代码中的公共模块，然后将公共模块打包到一个独立的文件中去，以便在其它的入口和模块中使用。
+
+修改 webpack.config.js，添加 plugins：
+
+	var webpack = require('webpack');
+	
+	module.exports = {
+	    entry:{
+	        main1:'./main',
+	        main2:'./main.2'
+	    },
+	    output:{
+	        filename:'bundle.[name].js'
+	    },
+	    plugins: [
+	    	//参数common.js表示公共模块的文件名，后面的数组元素与entry一一对应，表示要提取这些模块中的公共模块。
+	        new  webpack.optimize.CommonsChunkPlugin('common.js', ['main1', 'main2']) 
+	    ]
+	};
+
+	
 ####webpack-dashboard
 [webpack-dashboard](https://github.com/FormidableLabs/webpack-dashboard)是用于改善开发人员使用webpack时控制台用户体验的一款工具。它摒弃了webpack（尤其是使用webpack-dev-server时）在命令行内诸多杂乱的信息结构，为webpack在命令行上构建了一个一目了然的仪表盘(dashboard)，其中包括构建过程和状态、日志以及涉及的模块列表。有了它，你就可以更加优雅的使用webpack来构建你的代码。
 
@@ -760,7 +844,68 @@ chunk是使用Webpack过程中最重要的几个概念之一。在Webpack打包�
 			minChunks: chunks.length // 提取所有entry共同依赖的模块 
 		})
 	],
+####分片
+随着项目开发过程中越来越大，我们的代码体积也会越来越大，而将所有的脚本都打包到同一个JS文件中显然会带来性能方面的问题（无法并发，首次加载时间过长等）。
 
+webpack也提供了代码分片机制，使我们能够将代码拆分后进行异步加载。
+
+>值得注意的是，webpack对代码拆分的定位仅仅是为了解决文件过大，无法并发加载，加载时间过长等问题，并不包括公共代码提取和复用的功能。对公共代码的提取将由CommonChunks插件来完成。
+
+要使用webpack的分片功能，`首先需要定义“分割点”，即代码从哪里分割成两个文件`。
+
+#####分割点
+**分割点表示代码在此处被分割成两个独立的文件。** 具体的方式有两种。
+
+`使用require.ensure`：
+
+	require.ensure(["module-a", "module-b"], function(require) {
+	    var a = require("module-a");
+	    // ...
+	});
+
+`使用AMD的动态require`：
+
+	require(["module-a", "module-b"], function(a, b) {
+	    // ...
+	});
+
+上面的例子中，module-a和module-b就会被分割到独立的文件中去，而不会和入口文件打包在同一个文件中。
+
+>TODO：module-a和module-b何时会在同一个文件，何时不会在同一个文件？
+
+#####chunks
+example1中使用了require.ensure和AMD动态require两种方式，来建立分割点，代码在此处被分片。
+
+	var a=require('./a');
+	a.sayHello();
+	
+	require.ensure(['./b'], function(require){
+	    var b = require('./b');
+	    b.sayHello(); 
+	});
+	
+	require(['./c'], function(c){
+	    c.sayHello();
+	});
+
+打包后的代码：
+
+    bundle.js -> main.js + a.js
+    1.bundle.js -> b.js
+    2.bundle.js -> c.js
+
+多入口
+
+多入口的情况下：
+
+    入口1 bundle.main1.js -> main.js + a.js
+    入口2 bundle.main2.js -> main2.js + a.js
+    1.bundle.1.js -> b.js
+    2.bundle.2.js -> c.js
+
+可见公共代码a.js并没有被提取出来。
+
+>因此分片只是分片，并没有自动提取公共模块的作用。
 
 ###高级
 ####CommonJS规范
