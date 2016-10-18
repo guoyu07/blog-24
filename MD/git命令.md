@@ -101,7 +101,84 @@ Git同样告诉我们，用命令`git reset HEAD file`可以把暂存区的修�
 - 场景2：当你不但改乱了工作区某个文件的内容，还添加到了暂存区时，想丢弃修改，分两步，第一步用命令`git reset HEAD file`，就回到了场景1，第二步按场景1操作。
 - 场景3：已经提交了不合适的修改到版本库时，想要撤销本次提交，`git reset --hard commit_id`，不过前提是没有推送到远程库。
 
+##删除文件
+在Git中，删除也是一个修改操作，添加一个新文件test.txt到Git并且提交：
 
+	vi test.txt
+	:wq!
+	git add test.txt
+	git commit -m 'add test.txt'
+	
+用rm命令删了：
+
+	rm test.txt
+	
+这个时候，Git知道你删除了文件，因此，工作区和版本库就不一致了，git status命令会立刻告诉你哪些文件被删除了：
+
+	git status
+	On branch master
+	Changes not staged for commit:
+	  (use "git add/rm <file>..." to update what will be committed)
+	  (use "git checkout -- <file>..." to discard changes in working directory)
+	
+		deleted:    test.txt
+	
+	no changes added to commit (use "git add" and/or "git commit -a")
+	
+现在你有两个选择，**一是确实要从版本库中删除该文件，那就用命令git rm删掉，并且git commit：**
+
+	git rm test.txt
+	git commit -m 'remove test.txt'
+
+现在，文件就从版本库中被删除了。
+
+另一种情况是删错了，因为版本库里还有呢，所以可以很轻松地**把误删的文件恢复到最新版本：**
+
+	git checkout -- test.txt
+
+***git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。***
+
+##远程仓库
+本地Git仓库和GitHub仓库之间的传输是通过`SSH加密`的.
+
+所以，需要一点设置：
+
+- 第1步：创建SSH Key。在用户主目录下，看看有没有.ssh目录，如果有，再看看这个目录下有没有id_rsa和id_rsa.pub这两个文件，如果已经有了，可直接跳到下一步。如果没有，打开Shell（Windows下打开Git Bash），创建SSH Key：
+
+		ssh-keygen -t rsa -C "youremail@example.com"
+
+	你需要把邮件地址换成你自己的邮件地址，然后一路回车。
+
+	如果一切顺利的话，可以在用户主目录里找到`.ssh`目录，里面有`id_rsa`和`id_rsa.pub`两个文件，这两个就是SSH Key的秘钥对，id_rsa是私钥，不能泄露出去，id_rsa.pub是公钥，可以放心地告诉任何人。
+
+- 第2步：登陆GitHub，打开“Account settings”，“SSH Keys”页面：
+
+	然后，点“Add SSH Key”，填上任意Title，在Key文本框里粘贴id_rsa.pub文件的内容：
+![](../images/git_Add_SSH_Key.png)
+点“Add Key”，你就应该看到已经添加的Key：
+![](../images/git_Add_SSH_Key_done.png)
+
+为什么GitHub需要SSH Key呢？因为GitHub需要识别出你推送的提交确实是你推送的，而不是别人冒充的，而Git支持SSH协议，所以，GitHub只要知道了你的公钥，就可以确认只有你自己才能推送。
+
+当然，GitHub允许你添加多个Key。假定你有若干电脑，你一会儿在公司提交，一会儿在家里提交，只要把每台电脑的Key都添加到GitHub，就可以在每台电脑上往GitHub推送了。
+
+##添加远程库
+现在的情景是，你已经在本地创建了一个Git仓库后，又想在GitHub创建一个Git仓库，并且让这两个仓库进行远程同步。
+
+- 首先，登陆GitHub，然后，在右上角找到“Create a new repo”按钮，创建一个新的仓库：
+![](../images/git_GitHub_添加仓库.png)
+- 在Repository name填入learngit，其他保持默认设置，点击“Create repository”按钮，就成功地创建了一个新的Git仓库：
+![](../images/git_GitHub_添加仓库_name.png)
+
+
+问题：
+
+Warning: Permanently added the RSA host key for IP address '192.30.253.112' to the list of known hosts.   
+解决：host中加入192.30.253.112 github.com
+
+Permission denied (publickey).
+fatal: Could not read from remote repository.   
+解决：把本地生成的id_rsa.pub添加到github中。
 
 
 
