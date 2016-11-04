@@ -12,6 +12,9 @@ Git的官方网站：
 [http://git-scm.com](http://git-scm.com)    
 [https://git-scm.com/book/zh/v2](https://git-scm.com/book/zh/v2)
 
+xi
+	git clone -b app_rn_branch git@gitlab.58corp.com:wujianyu/app-rn-refactor.git
+
 #git
 Git是分布式版本控制系统。   
 分布式版本控制系统根本没有“中央服务器”，每个人的电脑上都是一个完整的版本库，这样，你工作的时候，就不需要联网了，因为版本库就在你自己的电脑上。既然每个人电脑上都有一个完整的版本库，那多个人如何协作呢？比方说你在自己电脑上改了文件A，你的同事也在他的电脑上改了文件A，这时，你们俩之间只需把各自的修改推送给对方，就可以互相看到对方的修改了。
