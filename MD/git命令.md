@@ -12,7 +12,10 @@ Git的官方网站：
 [http://git-scm.com](http://git-scm.com)    
 [https://git-scm.com/book/zh/v2](https://git-scm.com/book/zh/v2)
 
-xi
+Git工作原理:   
+[http://deweixu.me/2016/11/05/how-git-works/](http://deweixu.me/2016/11/05/how-git-works/)
+
+
 	git clone -b app_rn_branch git@gitlab.58corp.com:wujianyu/app-rn-refactor.git
 
 #git
