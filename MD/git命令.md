@@ -15,8 +15,18 @@ Git的官方网站：
 Git工作原理:   
 [http://deweixu.me/2016/11/05/how-git-works/](http://deweixu.me/2016/11/05/how-git-works/)
 
+git merge简介：   
+[http://hubingforever.blog.163.com/blog/static/1710405792012311103733821/](http://hubingforever.blog.163.com/blog/static/1710405792012311103733821/)
 
-	git clone -b app_rn_branch git@gitlab.58corp.com:wujianyu/app-rn-refactor.git
+git rebase简介(基本篇):   
+[http://hubingforever.blog.163.com/blog/static/171040579201242072539202/](http://hubingforever.blog.163.com/blog/static/171040579201242072539202/)
+
+git rebase简介(高级篇):   
+[http://hubingforever.blog.163.com/blog/static/17104057920124207260238/](http://hubingforever.blog.163.com/blog/static/17104057920124207260238/)
+
+Git Community Book 中文版:   
+[http://gitbook.liuhui998.com/index.html](http://gitbook.liuhui998.com/index.html)
+
 
 #git
 Git是分布式版本控制系统。   
@@ -900,6 +910,36 @@ Git会告诉我们，.gitignore的第3行规则忽略了该文件，于是我们
 	    email = your@email.com
 
 配置别名也可以直接修改这个文件，如果改错了，可以删掉文件重新通过命令配置。
+
+
+##其他
+###下载分支到本地
+`git clone -b [分支name] [分支链接]`
+
+例：
+
+	git clone -b app_rn_branch git@gitlab.58corp.com:wujianyu/app-rn-refactor.git
+	
+###查看远程分支
+
+	git branch -r
+	
+###查看本地和远程分支
+
+	git branch -a
+	
+###修改branch的名字
+
+	git branch -m [本地分支名] [要修改成的名字]
+	
+###分支(branch)合并到主干(master)
+
+	cd /workspace/m_workspace
+	git clone https://github.com/lunachi/learngit.git
+	cd /workspace/b_workspace
+	git clone -b dev https://github.com/lunachi/learngit.git
+	
+
 
 
 
