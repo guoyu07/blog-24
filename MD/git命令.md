@@ -932,6 +932,10 @@ Git会告诉我们，.gitignore的第3行规则忽略了该文件，于是我们
 
 	git branch -m [本地分支名] [要修改成的名字]
 	
+###git对比本地和远程分支的差异
+
+	git diff app_rn_branch origin/master
+	
 ###分支(branch)合并到主干(master)
 
 	cd /workspace/m_workspace

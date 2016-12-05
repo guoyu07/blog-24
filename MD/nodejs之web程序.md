@@ -1,3 +1,6 @@
+参考：    
+[https://github.com/nswbmw/N-blog](https://github.com/nswbmw/N-blog)    
+
 #Nodejs之web程序
 Node的核心是一个强大的流式HTTP解析器，大概由1500行经过优化的C代码组成。这个解析器跟Node开放给javascript的底层TCP API相结合，为你提供了一个非常底层，但也非常灵活的HTTP服务器。
 
