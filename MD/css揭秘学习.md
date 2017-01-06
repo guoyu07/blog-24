@@ -182,7 +182,40 @@ box-shadow 是层层叠加的,**第一层投影位于最顶层**,依次类推。
 4. box-shadow方案`只能模拟实线边框`
 
 ####背景：灵活的背景定位
+**无border**
+
+![](../images/css/background_img_1.png)
+
+	max-width: 10em;
+	min-height: 5em;
+	padding: 5px;
+	background: #58a url(../images/css/code-pirate.svg) bottom right no-repeat;
+	   
+**有border**
+
+![](../images/css/background_img_3.png)
+
+	max-width: 10em;
+	min-height: 5em;
+	padding: 5px;
+	background: #58a url(http://csssecrets.io/images/code-pirate.svg) bottom right no-repeat;
+	border: 10px solid #655;
+	
+注：   
+`默认情况下,background-position是以padding box为准的,这样边框才不会遮住背景图片。`
+
+![](../images/css/background_img_0.png)
+
 #####background-position扩展
+css3 允许指定背景图片距离任意角的偏移量，只要在偏移量前面指定关键字。
+
+![](../images/css/background_img_2.png)
+
+	background: #58a url(../images/css/code-pirate.svg) bottom right no-repeat;
+	background-position: bottom 10px right 20px;
+	
+注：由于有些浏览器不支持background-position偏移量，需要进行兼容处理，即将定位值写进background的简写属性，如不指定会出现background-position属性无效，背景图片会紧贴在左上角。
+
 #####background-origin
 #####calc()
 
