@@ -49,7 +49,11 @@ jQuery方法(width举例)：
 		
 ####边框：半透明边框（background-clip属性应用）
 
-	background-clip: padding-box;
+	background-clip: border-box|padding-box|content-box;
+	
+- border-box：背景被裁剪到边框盒。
+- padding-box：背景被裁剪到内边距框。
+- content-box：背景被裁剪到内容框。
 	
 示例：一个容器设置一层白色背景和一道半透明白色边框
 
@@ -182,6 +186,8 @@ box-shadow 是层层叠加的,**第一层投影位于最顶层**,依次类推。
 4. box-shadow方案`只能模拟实线边框`
 
 ####背景：灵活的背景定位
+需求：针对容器某个角对背景图片做偏移定位
+
 **无border**
 
 ![](../images/css/background_img_1.png)
@@ -211,13 +217,77 @@ css3 允许指定背景图片距离任意角的偏移量，只要在偏移量前
 
 ![](../images/css/background_img_2.png)
 
-	background: #58a url(../images/css/code-pirate.svg) bottom right no-repeat;
-	background-position: bottom 10px right 20px;
+	padding: 5px;
+    background: #58a url(http://csssecrets.io/images/code-pirate.svg) bottom right no-repeat;
+    background-position: bottom 5px right 5px;
 	
 注：由于有些浏览器不支持background-position偏移量，需要进行兼容处理，即将定位值写进background的简写属性，如不指定会出现background-position属性无效，背景图片会紧贴在左上角。
 
 #####background-origin
+background-position偏移的方式，代码不够DRY:每次改动内边距的值时,我们都需要在三个地方更新这个值。通过background-origin方式实现等效代码，只需通过padding即可同时改版背景的偏移大小。
+
+	padding: 5px;
+	background: #58a url(http://csssecrets.io/images/code-pirate.svg) bottom right no-repeat;
+	background-origin: content-box;
+	
+注：
+
+	background-origin: padding-box|border-box|content-box;
+	
+- padding-box：背景图像相对于内边距框来定位（默认）。
+- border-box：背景图像相对于边框盒来定位。
+- content-box：背景图像相对于内容框来定位。
+
 #####calc()
+calc() 函数内部的 `-` 和 `+` 运算符的两侧各加一个空白符,否则会产生解析错误!这个规则如此怪异,是为了向前兼容:
+
+	padding: 5px;
+	background: #58a url(http://csssecrets.io/images/code-pirate.svg) bottom right no-repeat;
+	background-position: calc(100% - 5px) calc(100% - 5px);
+	
+####边框内圆角
+示例：一个容器,只在内侧有圆角,而边框或描边的四个角在外部仍然保持直角的形状。
+
+![](../images/css/border_innerRadius_1.png)
+
+**两个元素实现方式**
+
+	.box {
+	    width: 10em;
+	    padding: .8em;
+	    background: #655;
+	}
+	.box div{
+	    padding:1em;
+	    background: tan;
+	    border-radius: .4em;
+	}
+	
+	<div class="box">
+	    <div>
+	        内边框圆角
+	    </div>
+	</div>
+
+![](../images/css/border_innerRadius_2.png)
+
+**如何用一个元素实现方式**
+
+	.box {
+	   width: 10em;
+	   padding: 1em;
+	   background: tan;
+	   border-radius: .4em;
+	   outline: .8em solid #655;
+	   box-shadow: 0 0 0 .2em #655;
+	}
+	<div class="box">
+		内边框圆角
+	</div>
+	
+注：box-shadow 属性指定的扩张值并不一定等于描边的宽度,我们只需要指定一个足够填补“空隙”的扩张值就可以了。事实上,指定一个等于描边宽度的扩张值在某些浏览器中可能会得到渲染异常,因此我推荐一个稍小些的值。
+
+####条纹背景
 
 
 
