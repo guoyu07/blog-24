@@ -367,9 +367,7 @@ calc() 函数内部的 `-` 和 `+` 运算符的两侧各加一个空白符,否�
 - step3: 最后一步,就是对伪元素设置变形样式。
 
       	.box {			position: relative;			/* 其他的文字颜色、内边距等样式...... */		} 
-			.box::before {			content: '';			position: absolute;			top: 0; right: 0; bottom: 0;left: 0;
-			z-index: -1;
-			transform: skew(-30deg);		}                          
+			.box::before {			content: ''; /* 用伪元素来生成一个矩形 */ 			position: absolute;			top: 0; right: 0; bottom: 0; left: 0; 			z-index: -1;			background: #58a;			transform: skew(45deg);		}                          
 
 #####扩展：
 参考：[http://nicolasgallagher.com/](http://nicolasgallagher.com/)  
@@ -380,6 +378,23 @@ calc() 函数内部的 `-` 和 `+` 运算符的两侧各加一个空白符,否�
 
 - **变形一个元素而不想变形它的内容**，
 - **边框内圆角**，
+
+		.box {
+            position: relative;
+            width: 10em;
+            height: 8em;
+            background: tan;
+            border-radius: .4em;
+        }
+
+        .box::before {
+            content: "";
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0; 			z-index: -1;			background: #655;
+            outline: 0.4em solid #655;
+        }
+        <div class="box"></div>
+        
 - **多重背景**，[multiple-backgrounds-and-borders-with-css2](http://nicolasgallagher.com/multiple-backgrounds-and-borders-with-css2/)
 - **多重边框**，
 - **为某一层“背景”单独设置类似opacity这样的属性。**[css-background-image-hacks](http://nicolasgallagher.com/css-background-image-hacks/)
