@@ -564,4 +564,144 @@ calc() 函数内部的 `-` 和 `+` 运算符的两侧各加一个空白符,否�
 	![](../images/css/pseudo_elements_4.png)
 
 ####菱形图片
+#####基于变形的方案 (transform:rotate(度数) scale(倍数))
+思路：把图片用一个\<div>包裹起来,然后对其应用相反的rotate()变形样式
 
+- step1
+	
+        .picture {
+            width: 250px;
+            height: 250px;
+            background: #ccc;
+        }
+        .picture > img {
+            width: 100%;
+            height: 100%;
+        }
+        
+        <div class="picture">
+		    <img src="../images/demo/picture.png" alt="...">
+		</div>
+	
+	![](../images/css/rhombus_1.png)
+	
+- step2 对div进行rotate旋转变形，图片也跟着一起旋转了
+
+        .picture {
+            width: 250px;
+            height: 250px;
+            background: #ccc;
+            transform: rotate(-45deg);
+        }
+        .picture > img {
+            width: 100%;
+            height: 100%;
+        }
+        
+        <div class="picture">
+		    <img src="../images/demo/picture.png" alt="...">
+		</div>
+		
+	![](../images/css/rhombus_2.png)
+	
+- step3 对图片反向旋转，此时图片内容超出了div容器
+
+        .picture {
+            width: 250px;
+            height: 250px;
+            background: #ccc;
+            transform: rotate(-45deg);
+        }
+        .picture > img {
+            width: 100%;
+            height: 100%;
+            transform: rotate(45deg);
+        }
+        
+        <div class="picture">
+		    <img src="../images/demo/picture.png" alt="...">
+		</div>
+		
+	![](../images/css/rhombus_3.png)
+	
+- step4 隐藏超出图片内容，裁成了一个八角形，`问题在于max-width: 100%这条声明。100%会被解析为容器 (.picture)的边长。但是,我们想让图片的宽度与容器的对角线相等,而不是与边长相等。`
+
+        .picture {
+            width: 250px;
+            height: 250px;
+            background: #ccc;
+            transform: rotate(-45deg);
+            overflow: hidden;
+        }
+        .picture > img {
+            width: 100%;
+            height: 100%;
+            transform: rotate(45deg);
+        }
+        
+        <div class="picture">
+		    <img src="../images/demo/picture.png" alt="...">
+		</div>
+		
+	![](../images/css/rhombus_4.png)
+	
+- step5 根据勾股定理，图片宽度近似为`√2×100%=142%`,此时图片会向右移动
+
+        .picture {
+            width: 250px;
+            height: 250px;
+            background: #ccc;
+            transform: rotate(-45deg);
+            overflow: hidden;
+        }
+        .picture > img {
+            width: 142%;
+            height: 142%;
+            transform: rotate(45deg);
+        }
+        
+        <div class="picture">
+		    <img src="../images/demo/picture.png" alt="...">
+		</div>
+		
+	![](../images/css/rhombus_5.png)
+	
+- step6 用 `scale()` 变形样式来把这个图片放大
+
+        .picture {
+            width: 250px;
+            height: 250px;
+            background: #ccc;
+            transform: rotate(-45deg);
+            overflow: hidden;
+        }
+        .picture > img {
+            width: 100%;
+            height: 100%;
+            transform: rotate(45deg) scale(1.42);
+        }
+        
+        <div class="picture">
+		    <img src="../images/demo/picture.png" alt="...">
+		</div>
+		
+	![](../images/css/rhombus_6.png)
+	
+	注：我们希望图片的尺寸属性保留 100% 这个值,这样当浏览器不支持变形样式时仍然可以得到一个合理的布局。    	通过 scale() 变形样式来缩放图片时,是以它的中心点进行缩放的 (除非我们额外指定了 transform-origin 样式)。通过 width 属性 来放大图片时,只会以它的左上角为原点进行缩放,从而迫使我们动用额外的负外边距来把图片的位置调整回来。
+#####裁剪路径方案 （clip-path）思路：使用 `polygon()`(多边形)函数来指定一个菱形。它允许我们用一系列(以逗号分隔的)坐标点来指定任意的多边形。
+	clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+- step1 
+
+		.picClipPath {
+	        clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+	    }
+			<img class="picClipPath" src="../images/demo/picture.png" alt="...">	
+- step2 加入hover动画效果
+        .picClipPath {
+            clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+            transition: 1s clip-path;
+        }
+        .picClipPath:hover {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        }
+			<img class="picClipPath" src="../images/demo/picture.png" alt="...">	
