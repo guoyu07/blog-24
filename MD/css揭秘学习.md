@@ -372,6 +372,12 @@ calc() 函数内部的 `-` 和 `+` 运算符的两侧各加一个空白符,否�
 #####扩展：
 参考：[http://nicolasgallagher.com/](http://nicolasgallagher.com/)  
 
+伪元素及宿主元素之间的层叠关系：
+
+![](../images/css/css2-multiple-background-border-model.png)
+
+`由底层到顶层顺序：element>:before>:before[content]>:after>:after[content]`
+
 利用伪元素以及定位属性产生了一个方块, 然后对伪元素设置样式,并将其放置在其宿主元素的下层。
 
 效果案例：
@@ -396,7 +402,166 @@ calc() 函数内部的 `-` 和 `+` 运算符的两侧各加一个空白符,否�
         <div class="box"></div>
         
 - **多重背景**，[multiple-backgrounds-and-borders-with-css2](http://nicolasgallagher.com/multiple-backgrounds-and-borders-with-css2/)
+
+		.silverback {
+		    position: relative;
+		    z-index: 1;
+		    min-width: 200px;
+		    min-height: 200px;
+		    padding: 120px 200px 50px;
+		    background: #d3ff99 url(../images/demo/vines-back.png) -10% 0 repeat-x;
+		    text-align: center;
+		}
+		
+		.silverback:before,
+		.silverback:after {
+		    position: absolute;
+		    z-index: -1;
+		    top: 0;
+		    left: 0;
+		    right: 0;
+		    bottom: 0;
+		    padding-top: 100px;
+		}
+		
+		.silverback:before {
+		    content: url(../images/demo/gorilla-1.png);
+		    padding-left: 3%;
+		    text-align: left;
+		    background: transparent url(../images/demo/vines-mid.png) 300% 0 repeat-x;
+		}
+		
+		.silverback:after {
+		    content: url(../images/demo/gorilla-2.png);
+		    padding-right: 3%;
+		    text-align: right;
+		    background: transparent url(../images/demo/vines-front.png) 70% 0 repeat-x;
+		}
+		
+		<div class="silverback">
+		    <pre><code>&lt;div class="silverback"&gt;[content]&lt;/div&gt;</code></pre>
+		</div>
+		
+	![](../images/css/pseudo_elements_1.png)
+
 - **多重边框**，
+
+		.mulborders {
+		  width: 440px;
+		  position: relative;
+		  z-index: 10;
+		  padding: 40px;
+		  border: 5px solid #f00;
+		  background: #ff9600;
+		}
+		
+		.mulborders:before {
+		  content: "";
+		  display: block;
+		  position: absolute;
+		  z-index: -1;
+		  top: 5px;
+		  left: 5px;
+		  right: 5px;
+		  bottom: 5px;
+		  border: 5px solid #ffea00;
+		  background: #4aa929;
+		}
+		
+		.mulborders p:first-child:before {
+		  content: "";
+		  display: block;
+		  position: absolute;
+		  z-index: -1;
+		  top: 15px;
+		  left: 15px;
+		  right: 15px;
+		  bottom: 15px;
+		  border: 5px solid #00b4ff;
+		  background: #7200ff;
+		}
+		
+		.mulborders:after {
+		  content: "";
+		  display: block;
+		  position: absolute;
+		  z-index: -1;
+		  top: 25px;
+		  left: 25px;
+		  right: 25px;
+		  bottom: 25px;
+		  border: 5px solid #f000ff;
+		  background: #fff;
+		}
+		
+		<div class="mulborders">
+		    <p>A div with at least one child element provides 7 "borders".</p>
+		</div>
+		
+	![](../images/css/pseudo_elements_2.png)
+	
 - **为某一层“背景”单独设置类似opacity这样的属性。**[css-background-image-hacks](http://nicolasgallagher.com/css-background-image-hacks/)
 
+		.jupiter {
+		    position: relative;
+		    z-index: 1;
+		    width: 340px;
+		    height: 440px;
+		    padding: 20px 280px 20px 20px;
+		    margin: 0 auto;
+		    color: #fcfcfc;
+		    background: #000;
+		}
+		
+		.jupiter::before {
+		    content: "";
+		    position: absolute;
+		    z-index: -1;
+		    top: 0;
+		    bottom: 0;
+		    left: 0;
+		    right: 0;
+		    background: url(../images/demo/jupiter.jpg) no-repeat;
+		    opacity: 0.5;
+		}
+		.jupiter:hover::before{
+		    opacity: 1;
+		}
+	     
+		<div class="jupiter">
+		    <pre><code>&lt;div&gt;[content]&lt;/div&gt;</code></pre>
+		</div>
+		
+	![](../images/css/pseudo_elements_3.png)
+	
+		.crop-sprite {
+            display: block;
+            overflow: hidden;
+            width: 260px;
+            padding: 10px 20px;
+            border: 2px solid #aaa;
+            margin: 40px auto 20px;
+            font: bold 30px/60px Arial, sans-serif;
+            color: #000;
+            background: #fefefe;
+        }
+
+        .crop-sprite::before {
+            content: "";
+            float: left;
+            width: 60px;
+            height: 60px;
+            margin: 0 20px 0 0;
+            background: url(../images/demo/crop-sprite.png) 0 -60px;
+        }
+
+        .crop-sprite:hover::before {
+            background-position: -120px -60px;
+        }
+        
+		<div class="crop-sprite">text content</div>
+		
+	![](../images/css/pseudo_elements_4.png)
+
+####菱形图片
 
