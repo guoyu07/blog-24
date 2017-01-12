@@ -705,3 +705,90 @@ calc() 函数内部的 `-` 和 `+` 运算符的两侧各加一个空白符,否�
             clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
         }
 			<img class="picClipPath" src="../images/demo/picture.png" alt="...">	
+####切角效果
+#####渐变方案：渐变可以接受一个角度(比如 45deg)作为方向
+**一个切角**：只需要`一个线性渐变`就可以达到目标。这个渐变需要`把一个透明色标放在切角处`,然后在相同位置设置另一个色标,并且 把它的颜色设置为我们想要的背景色。假设切角的深度为15px
+
+	.box {
+       width: 10em;
+       height: 6em;
+       background: #58a; /*回退机制*/
+       background: linear-gradient(-45deg,transparent 15px,#58a 0);
+    }
+	<div class="box"></div>
+			
+![](../images/css/cutangle_1.png)
+
+**两个切角**：
+
+- 对角切角：一层渐变就可以实现,切角深度为5%
+        
+		.box {
+		    width: 10em;
+		    height: 6em;
+		}
+		.twoDiagonal {
+            background: #58a; /*回退机制*/
+            background: linear-gradient(-45deg, transparent 5%, #58a 0, #58a 95%, transparent 0);
+        }
+		<div class="box twoDiagonal"></div>
+		
+	![](../images/css/cutangle_2.png)
+
+- 同侧切角：需要使用两层渐变，使用 `background-size` 让每层渐变分别只占据整个元素一半的面积。
+
+		.box {
+		    width: 10em;
+		    height: 6em;
+		}
+       .two {
+           background: #58a; /*回退机制*/
+           background: linear-gradient(-45deg, transparent 15px, #58a 0) right, linear-gradient(45deg, transparent 15px, #655 0) left;
+           background-size: 50% 100%;
+           background-repeat: no-repeat;
+       }
+		<div class="box two"></div>
+		
+	![](../images/css/cutangle_3.png)
+	
+**3个切角**：
+
+	.box {
+	    width: 10em;
+	    height: 6em;
+	}
+    .three{
+        background: #58a; /*回退机制*/
+        background: linear-gradient(135deg,transparent 15px, #58a 0) top left/50% 50%,
+        linear-gradient(-135deg, transparent 15px, #655 0) top right/50% 100%,
+        linear-gradient(45deg, transparent 15px, tan 0) bottom left/50% 50%;
+        background-repeat: no-repeat;
+    }
+    
+	<div class="box three"></div>
+	
+![](../images/css/cutangle_4.png)
+	
+**4个切角**：
+
+	.box {
+	    width: 10em;
+	    height: 6em;
+	}
+	.four{
+        background: #58a; /*回退机制*/
+        background: linear-gradient(135deg,transparent 15px, #58a 0) top left,
+        linear-gradient(-135deg, transparent 15px, #655 0) top right,
+        linear-gradient(-45deg, transparent 15px, tan 0) bottom right,
+        linear-gradient(45deg, transparent 15px, #fb0 0) bottom left;
+        background-size: 50% 50%;
+        background-repeat: no-repeat;
+    }
+    
+	<div class="box four"></div>
+
+![](../images/css/cutangle_5.png)
+
+#####弧形切角
+
+		
