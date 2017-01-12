@@ -790,5 +790,46 @@ calc() 函数内部的 `-` 和 `+` 运算符的两侧各加一个空白符,否�
 ![](../images/css/cutangle_5.png)
 
 #####弧形切角
+使用径向渐变`radial-gradient`来替代线性渐变`linear-gradient`实现弧形切角
+
+	.box {
+	    width: 10em;
+	    height: 6em;
+	}
+	.arcFour{
+	   background: #58a; /*回退机制*/
+	   background: radial-gradient(circle at top left,transparent 15px, #58a 0) top left,
+	   radial-gradient(circle at top right, transparent 15px, #655 0) top right,
+	   radial-gradient(circle at bottom right, transparent 15px, tan 0) bottom right,
+	   radial-gradient(circle at bottom left, transparent 15px, #fb0 0) bottom left;
+	   background-size: 50% 50%;
+	   background-repeat: no-repeat;
+	}
+	
+	<div class="box arcFour"></div>
+	
+![](../images/css/cutangle_6.png)
+
+#####剪切路径方案
+clip-path、polygon()、calc()
+
+	.box {
+	    width: 10em;
+	    height: 6em;
+	}
+	.clipPathFour {
+	   background: #58a;
+	   clip-path: polygon(
+	           0 15px, 15px 0,
+	           calc(100% - 15px) 0, 100% 15px,
+	           100% calc(100% - 15px), calc(100% - 15px) 100%,
+	           15px 100%, 0 calc(100% - 15px)
+	   );
+	}
+	
+	<div class="box clipPathFour"></div>
+	
+![](../images/css/cutangle_7.png)
+
 
 		
