@@ -831,5 +831,132 @@ clip-path、polygon()、calc()
 	
 ![](../images/css/cutangle_7.png)
 
+优点：可以使用任意类型的背景,甚至可以对替换元素(比如图片)进行裁切。    
+缺点：**当内边距不够宽时,它会裁切掉文本**，因为它只能对元素做统一的裁切,并不能区分元素的各个部分。与此不同的是,渐变方案允许文 字溢出并超出切角区域(因为它只是背景图案);而 border-image 方案则 会起到普通边框的作用,令文字折行。   
+改定切角大小需要改动的地方较多，代码不DRY。
 
-		
+#####内联SVG与border-image方案
+
+####梯形标签页
+**对元素使用了3D变形之后,其内部的变形效应是“不可逆转”的**,这一点跟2D变形不同(在2D变形的体系之下,内部的逆向变形可以抵消外部的变形效应),取消其内部的变形效应在技术上是有可能的,但非常复杂。因此,**如果我们想发挥3D变形的功能来生成梯形,唯一可行的途径就是把变形效果作用在伪元素上。**
+示例：
+
+- step1
+		
+		.box {
+           width: 7em;
+           height: 4em;
+           background: #58a;
+           line-height: 4em;
+           text-align: center;
+       }
+		<div class="box"></div>
+		
+	![](../images/css/trapezoid_1.png)
+	
+- step2
+
+		.box {
+           width: 7em;
+           height: 4em;
+           background: #58a;
+           line-height: 4em;
+           text-align: center;
+    	}
+    	.trapezoid {
+            transform: perspective(.5em) rotateX(5deg);
+        }
+		<div class="box trapezoid">梯形</div>
+		
+	![](../images/css/trapezoid_2.png)
+	
+	
+- step3
+
+		.box {
+           width: 7em;
+           height: 4em;
+           /*background: #58a;*/
+           line-height: 4em;
+           text-align: center;
+    	}
+        .trapezoid {
+            position: relative;
+        }
+        .trapezoid:before{
+            content: "";
+            top:0;left:0;right: 0;bottom:0;
+            position: absolute;
+            z-index: -1;
+            background: #58a;
+            transform: perspective(.5em) rotateX(5deg);
+        }
+		<div class="box trapezoid">梯形</div>
+		
+	![](../images/css/trapezoid_3.png)
+	
+	当我们没有设置`transform-origin`属性时,应用变形效果会让这个元素以它自身的中心线为轴进行空间上的旋转。 因此,元素投射到2D屏幕上的尺寸会发生多种变化,它的宽度会增加,它所占据的位置会稍稍下移,它在高度上会有少许缩减,等等。这些变化导致它在设计上很难控制。
+	
+- step4
+
+	**为了让它的尺寸更好掌握,我们可以为它指定`transform-origin: bottom;`,当它在3D空间中旋转时,可以把它的底边固定住。**			    .trapezoid:before{
+            content: "";
+            top:0;left:0;right: 0;bottom:0;
+            position: absolute;
+            z-index: -1;
+            background: #58a;
+            transform: perspective(.5em) rotateX(5deg);
+            transform-origin: bottom;
+        }
+    
+    ![](../images/css/trapezoid_4.png)
+       
+	现在它看起来就直观多了,只有高度会发生变化。不过这样一来,高度的缩水会变得更加显眼,因为现在整个元素是转离屏幕前的观众的;而在之前,元素的上半部分会转向屏幕后面,下半部分会转出屏幕。
+
+- step5
+
+	**同样通过变形属性来改变它的尺寸**,垂直方向上的放大(也就是 scaleY()变形属性)来补足它在高度上的缩水。
+	
+		.trapezoid:before{
+            content: "";
+            top:0;left:0;right: 0;bottom:0;
+            position: absolute;
+            z-index: -1;
+            background: #58a;
+            transform: scaleY(1.5) perspective(.5em) rotateX(5deg);
+            transform-origin: bottom;
+        }
+        
+	![](../images/css/trapezoid_5.png)
+	
+标签效果：
+	
+	.tab {
+	    width: 7em;
+	    height: 4em;
+	    text-align: center;
+	    position: relative;
+	    padding: .3em 1em 0;
+	}
+	
+	.tab::before {
+	    content: '';
+	    position: absolute;
+	    top: 0;right: 0;bottom: 0;left: 0;
+	    z-index: -1;
+	    background: #ccc;
+	    background-image: linear-gradient(
+	            hsla(0, 0%, 100%, .6),
+	            hsla(0, 0%, 100%, 0));
+	    border: 1px solid rgba(0, 0, 0, .4);
+	    border-radius: .5em .5em 0 0;
+	    box-shadow: 0 .15em white inset;
+	    transform: scaleY(1.8) perspective(.5em) rotateX(5deg);
+	    transform-origin: bottom;
+	}
+	.tab:hover::before{
+	    transform-origin: bottom left;
+	}
+	<div class="tab">梯形标签</div>
+	
+![](../images/css/trapezoid_6.png)
