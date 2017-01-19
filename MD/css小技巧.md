@@ -201,3 +201,35 @@
 	  color: #fff;
 	}
 首先，先下载文档内容，加载头部的样式资源（如果有），然后按照从上而下，自外而内的顺序渲染DOM内容。套用本例就是，先渲染父元素，后渲染子元素，是有个先后顺序的。因此当渲染到父元素的时候，子元素的width:100%并没有渲染，所以，宽度就是图片加文字内容的宽度；等渲染到文字这个子元素的时候，父元素宽度已经固定，此时的width:100%就是已经固定好的父元素的宽度，宽度不够怎么办？溢出就好了，overflow属性就是为此而生的。
+
+##css3渐变
+CSS3 Gradient 分为 linear-gradient（线性渐变）和 radial-gradient（径向渐变）
+
+###线性渐变linear-gradient
+语法：
+
+	linear-gradient( [<point> || <angle>,]? <stop>, <stop> [, <stop>]* )
+	
+参数：共有三个参数
+
+- 第一个参数表示线性渐变的方向（或角度）, 	- to top：设置渐变从下到上。相当于: 0deg
+	- to right：设置渐变从左到右。相当于: 90deg
+	- to bottom：设置渐变从上到下。相当于: 180deg。这是默认值，等同于留空不写。
+	- to left：设置渐变为从右到左。相当于: 270deg
+	- to top right：到右上角的渐变。相当于: 45deg	
+	- to bottom right：到右下角的渐变。相当于: 135deg
+	- to bottom left：到左下角的渐变。相当于: 225deg
+	- to top left：到左上角的渐变。相当于: 315deg
+	
+- 第二个和第三个参数分别是起点颜色和终点颜色。你还可以在它们之间插入更多的参数，表示多种颜色的渐变。
+
+![](../images/css/css3_linear-gradient_1.png)
+
+####角度
+**角度是指水平线与渐变线之间的角度，以逆时针方向旋转。总之，0deg创建一个从底部到顶部的垂直渐变，当变成90deg时生成一个从左到右的水平渐变。**
+
+![](../images/css/css3_linear-gradient_deg_1.png)
+![](../images/css/css3_linear-gradient_deg_2.png)
+
+![](../images/css/css3_linear-gradient_deg_3.png)
+
