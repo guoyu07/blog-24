@@ -151,7 +151,65 @@ React 提供一个工具方法 React.Children 来处理 this.props.children 。�
     );
 
 上面代码会输出"Hello World"。
-    
+ 
+##获取真实的DOM节点
+`ref` 属性获取组件真实 DOM 的节点。
+
+    var MyComponent = React.createClass({
+      handleClick: function() {
+        this.refs.myTextInput.focus();
+      },
+      render: function() {
+        return (
+          <div>
+            <input type="text" ref="myTextInput" />
+            <input type="button" value="Focus the text input" onClick={this.handleClick} />
+          </div>
+        );
+      }
+    });
+
+    ReactDOM.render(
+      <MyComponent />,
+      document.getElementById('example')
+    );
+
+上面代码中，组件 MyComponent 的子节点有一个文本输入框，用于获取用户的输入。这时就必须获取真实的 DOM 节点，虚拟 DOM 是拿不到用户输入的。为了做到这一点，文本输入框必须有一个 ref 属性，然后 `this.refs.[refName]` 就会返回这个真实的 DOM 节点。
+
+需要注意的是，**由于 this.refs.[refName] 属性获取的是真实 DOM ，所以必须等到虚拟 DOM 插入文档以后，才能使用这个属性，否则会报错。**上面代码中，通过为组件指定 Click 事件的回调函数，确保了只有等到真实 DOM 发生 Click 事件之后，才会读取 this.refs.[refName] 属性。
+
+##this.state
+组件免不了要与用户互动，React 的一大创新，就是**将组件看成是一个状态机，一开始有一个初始状态，然后用户互动，导致状态变化，从而触发重新渲染 UI**。
+
+
+    var LikeButton = React.createClass({
+      getInitialState: function() {
+        return {liked: false};
+      },
+      handleClick: function(event) {
+        this.setState({liked: !this.state.liked});
+      },
+      render: function() {
+        var text = this.state.liked ? 'like' : 'haven\'t liked';
+        return (
+          <p onClick={this.handleClick}>
+            You {text} this. Click to toggle.
+          </p>
+        );
+      }
+    });
+
+    ReactDOM.render(
+      <LikeButton />,
+      document.getElementById('example')
+    );
+
+上面代码是一个 LikeButton 组件，它的 `getInitialState` 方法用于定义初始状态，也就是一个对象，这个对象可以通过 `this.state属性读取` 。当用户点击组件，导致状态变化，`this.setState方法就修改状态值`，**每次修改以后，自动调用 `this.render` 方法，再次渲染组件**。
+
+> 由于 this.props 和 this.state 都用于描述组件的特性，可能会产生混淆。一个简单的区分方法是，`this.props 表示那些一旦定义，就不再改变的特性，而 this.state 是会随着用户互动而产生变化的特性。`
+
+
+
 <br>
 参考：
 
