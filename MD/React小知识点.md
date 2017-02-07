@@ -475,6 +475,8 @@ getDefaultProps 设置 props 值：
 #####shouldComponentUpdate(nextProps, nextState)
 如果你确定组件的 props 或者 state 的改变不需要重新渲染，可以通过在这个方法里通过返回 false 来阻止组件的重新渲染，返回 `false 则不会执行 render 以及后面的 componentWillUpdate，componentDidUpdate 方法。
 
+>通常不需要使用以避免出现bug。在出现应用的瓶颈时，可通过该方法进行适当的优化。在首次渲染期间或者调用了forceUpdate方法后，该方法不会被调用.
+
 该方法是非必须的，并且大多数情况下没有在开发中使用。
 
 	var Basket = React.createClass({
