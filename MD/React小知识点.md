@@ -535,6 +535,20 @@ getDefaultProps 设置 props 值：
 - render
 - componentDidMount
 
+###React的原理
+React为此引入了虚拟DOM（Virtual DOM）的机制：在浏览器端用Javascript实现了一套DOM API。基于React进行开发时所有的DOM构造都是通过虚拟DOM进行，每当数据变化时，React都会重新构建整个DOM树，然后React将当前整个DOM树和上一次的DOM树进行对比，得到DOM结构的区别，然后仅仅将需要变化的部分进行实际的浏览器DOM更新。而且React能够批处理虚拟DOM的刷新，在一个事件循环（Event Loop）内的两次数据变化会被合并，例如你连续的先将节点内容从A变成B，然后又从B变成A，React会认为UI不发生任何变化，而如果通过手动控制，这种逻辑通常是极其复杂的。尽管每一次都需要构造完整的虚拟DOM树，但是因为虚拟DOM是内存数据，性能是极高的，而对实际DOM进行操作的仅仅是Diff部分，因而能达到提高性能的目的。这样，在保证性能的同时，开发者将不再需要关注某个数据的变化如何更新到一个或多个具体的DOM元素，而只需要关心在任意一个数据状态下，整个界面是如何Render的。
+
+###组件化的开发思路
+>所谓组件，即封装起来的具有独立功能的UI部件。
+
+React推荐以组件的方式去重新思考UI构成，将UI上每一个功能相对独立的模块定义成组件，然后将小的组件通过组合或者嵌套的方式构成大的组件，最终完成整体UI的构建。每个组件的UI和逻辑都定义在组件内部，和外部完全通过API来交互，通过组合的方式来实现复杂的功能。
+
+React认为一个组件应该具有如下特征：
+
+1. **可组合**（Composeable）：一个组件易于和其它组件一起使用，或者嵌套在另一个组件内部。如果一个组件内部创建了另一个组件，那么说父组件拥有（own）它创建的子组件，通过这个特性，一个复杂的UI可以拆分成多个简单的UI组件；
+- **可重用**（Reusable）：每个组件都是具有独立功能的，它可以被使用在多个UI场景；
+- **可维护**（Maintainable）：每个小的组件仅仅包含自身的逻辑，更容易被理解和维护；
+- **可测试**（Testable）：因为每个组件都是独立的，那么对于各个组件分别测试显然要比对于整个UI进行测试容易的多。
 
 
 <br>
@@ -569,3 +583,7 @@ getDefaultProps 设置 props 值：
 [深入浅出React（五）：使用Flux搭建React应用程序架构](http://www.infoq.com/cn/articles/react-flux)
 
 [React组件生命周期小结](http://www.jianshu.com/p/4784216b8194)
+
+[React项目新手指南](https://www.w3ctech.com/topic/1496)
+
+[ECMAScript 6 in WebStorm: Transpiling](https://blog.jetbrains.com/webstorm/2015/05/ecmascript-6-in-webstorm-transpiling/)

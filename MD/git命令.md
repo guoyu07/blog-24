@@ -918,7 +918,7 @@ Git会告诉我们，.gitignore的第3行规则忽略了该文件，于是我们
 
 例：
 
-	git clone -b app_rn_branch git@gitlab.58corp.com:wujianyu/app-rn-refactor.git
+	git clone -b app_rn_branch git@gitlab.58corp.com:post-fe/app-rn-refactor.git
 	
 ###查看远程分支
 
