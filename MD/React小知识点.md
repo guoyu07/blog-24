@@ -1,3 +1,39 @@
+参考：
+
+[React中文API](http://reactjs.cn/react/docs/getting-started.html)
+
+[React 常用面试题目与分析](http://mp.weixin.qq.com/s?__biz=MzAxODE2MjM1MA==&mid=2651551676&idx=2&sn=b5d36019c22f1d55eb9cb085313321b2&chksm=8025a07db752296b785af57fff026ddfa6161b3b974fe72ea413d5ab64e46afac991b052cdc3&mpshare=1&scene=23&srcid=0204bPDupBXgKEnYSVqQuLhu#rd)
+
+[React Native填坑之旅](http://blog.csdn.net/future_challenger/article/category/6410836)
+
+[React 入门实例教程](http://www.ruanyifeng.com/blog/2015/03/react.html)
+
+[React 技术栈系列教程](http://www.ruanyifeng.com/blog/2016/09/react-technology-stack.html)
+
+[Flux 架构入门教程](http://www.ruanyifeng.com/blog/2016/01/flux.html)
+
+[Redux 入门教程（一）：基本用法](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_one_basic_usages.html)
+
+[Redux 入门教程（二）：中间件与异步操作](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_two_async_operations.html)
+
+[Redux 入门教程（三）：React-Redux 的用法](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_three_react-redux.html)
+
+[深入浅出React（一）：React的设计哲学 - 简单之美](http://www.infoq.com/cn/articles/react-art-of-simplity/)
+
+[深入浅出React（二）：React开发神器Webpack](http://www.infoq.com/cn/articles/react-and-webpack/)
+
+[深入浅出React（三）：理解JSX和组件](http://www.infoq.com/cn/articles/react-jsx-and-component?utm_source=tuicool&utm_medium=referral)
+
+[深入浅出React（四）：虚拟DOM Diff算法解析](http://www.infoq.com/cn/articles/react-dom-diff)
+
+[深入浅出React（五）：使用Flux搭建React应用程序架构](http://www.infoq.com/cn/articles/react-flux)
+
+[React组件生命周期小结](http://www.jianshu.com/p/4784216b8194)
+
+[React项目新手指南](https://www.w3ctech.com/topic/1496)
+
+[ECMAScript 6 in WebStorm: Transpiling](https://blog.jetbrains.com/webstorm/2015/05/ecmascript-6-in-webstorm-transpiling/)
+
 #React
 ##入门
 ###HTML模板
@@ -550,40 +586,114 @@ React认为一个组件应该具有如下特征：
 - **可维护**（Maintainable）：每个小的组件仅仅包含自身的逻辑，更容易被理解和维护；
 - **可测试**（Testable）：因为每个组件都是独立的，那么对于各个组件分别测试显然要比对于整个UI进行测试容易的多。
 
+**简化的组件模型：所谓组件，其实就是状态机器**
 
-<br>
-参考：
+组件并不是一个新的概念，它意味着某个独立功能或界面的封装，达到复用、或是业务逻辑分离的目的。而React却这样理解界面组件：
 
-[React中文API](http://reactjs.cn/react/docs/getting-started.html)
+所谓组件，就是状态机器 (`对组件的管理就是对状态的管理,React组件很少需要暴露组件方法和外部交互`)
 
-[React 常用面试题目与分析](http://mp.weixin.qq.com/s?__biz=MzAxODE2MjM1MA==&mid=2651551676&idx=2&sn=b5d36019c22f1d55eb9cb085313321b2&chksm=8025a07db752296b785af57fff026ddfa6161b3b974fe72ea413d5ab64e46afac991b052cdc3&mpshare=1&scene=23&srcid=0204bPDupBXgKEnYSVqQuLhu#rd)
+>**React将用户界面看做简单的状态机器。当组件处于某个状态时，那么就输出这个状态对应的界面。**通过这种方式，就很容易去保证界面的一致性。
 
-[React Native填坑之旅](http://blog.csdn.net/future_challenger/article/category/6410836)
+>在React中，你简单的去更新某个组件的状态，然后输出基于新状态的整个界面。React负责以最高效的方式去比较两个界面并更新DOM树。
 
-[React 入门实例教程](http://www.ruanyifeng.com/blog/2015/03/react.html)
+- 对组件的管理就是对状态的管理
+- React组件很少需要暴露组件方法和外部交互
+- 组件是React中构建用户界面的基本单位。它们和外界的交互除了状态（state）之外，还有就是属性（props）。
 
-[React 技术栈系列教程](http://www.ruanyifeng.com/blog/2016/09/react-technology-stack.html)
+	- 事实上，状态更多的是一个组件内部去自己维护，
+	- 而属性则由外部在初始化这个组件时传递进来（一般是组件需要管理的数据）。
+	- React认为属性应该是只读的，一旦赋值过去后就不应该变化。
 
-[Flux 架构入门教程](http://www.ruanyifeng.com/blog/2016/01/flux.html)
+**每一次界面变化都是整体刷新**
 
-[Redux 入门教程（一）：基本用法](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_one_basic_usages.html)
+关于虚拟DOM的原理简而言之就是，UI界面是一棵DOM树，对应的我们创建一个全局唯一的数据模型，每次数据模型有任何变化，都将整个数据模型应用到UI DOM树上，由React来负责去更新需要更新的界面部分。事实证明，这种方式不但简化了开发逻辑并且极大的提高了性能。
 
-[Redux 入门教程（二）：中间件与异步操作](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_two_async_operations.html)
+##单向数据流动：Flux
+Flux框架用于管理数据流，Flux提倡的是`单向数据流动，即永远只有从模型到视图的数据流动。`
+![](../images/Flux单向数据流动.jpg =600x)
 
-[Redux 入门教程（三）：React-Redux 的用法](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_three_react-redux.html)
+Flux引入了Dispatcher和Action的概念：`Dispatcher是一个全局的分发器负责接收Action，而Store可以在Dispatcher上监听到Action并做出相应的操作。`简单的理解可以认为类似于全局的消息发布订阅模型。Action可以来自于用户的某个界面操作，比如点击提交按钮；也可以来自服务器端的某个数据更新。当数据模型发生变化时，就触发刷新整个界面。
 
-[深入浅出React（一）：React的设计哲学 - 简单之美](http://www.infoq.com/cn/articles/react-art-of-simplity/)
+###让数据模型也变简单：Immutability
+Immutability含义是只读数据，React提倡使用只读数据来建立数据模型。`所有数据都是只读的，如果需要修改它，那么你只能产生一份包含新的修改的数据。`
 
-[深入浅出React（二）：React开发神器Webpack](http://www.infoq.com/cn/articles/react-and-webpack/)
+只读的数据可以让代码更加的安全和易于维护，你不再需要担心数据在某个角落被某段神奇的代码所修改；也就不必再为了找到修改的地方而苦苦调试。而结合React，只读数据能够让React的组件仅仅通过比较对象引用是否相等来决定自身是否要重新Render。这在复杂的界面上可以极大的提高性能。
 
-[深入浅出React（三）：理解JSX和组件](http://www.infoq.com/cn/articles/react-jsx-and-component?utm_source=tuicool&utm_medium=referral)
+针对只读数据，Facebook开发了一整套框架[immutable.js](http://facebook.github.io/immutable-js/)，如果不希望一开始就引入这样一个较大的框架，React还提供了一个工具类插件，帮助管理和操作只读数据：[React.addons.update](https://facebook.github.io/react/docs/update.html)。
 
-[深入浅出React（四）：虚拟DOM Diff算法解析](http://www.infoq.com/cn/articles/react-dom-diff)
+##JSX
+JSX语法将XML语法直接加入到JavaScript代码中，让你能够高效的通过代码而不是模板来定义界面。之后JSX通过翻译器转换到纯JavaScript再由浏览器执行。在实际开发中，JSX在产品打包阶段都已经编译成纯JavaScript，JSX的语法不会带来任何性能影响。
 
-[深入浅出React（五）：使用Flux搭建React应用程序架构](http://www.infoq.com/cn/articles/react-flux)
+	var person = <Person name={window.isLoggedIn ? window.name : ''} />;
 
-[React组件生命周期小结](http://www.jianshu.com/p/4784216b8194)
+###JSX的语法
+JSX用大括号来加入JavaScript表达式，大括号中是JavaScript，而JSX又允许在JavaScript中使用XML，因此在大括号中仍然可以使用XML来声明组件，不断递归使用。
 
-[React项目新手指南](https://www.w3ctech.com/topic/1496)
+###在JSX中使用事件
+	<button onClick={this.checkAndSubmit.bind(this)}>Submit</button>
+	
+`在JSX中你不需要关心什么时机去移除事件绑定，因为React会在对应的真实DOM节点移除时就自动解除了事件绑定。`
 
-[ECMAScript 6 in WebStorm: Transpiling](https://blog.jetbrains.com/webstorm/2015/05/ecmascript-6-in-webstorm-transpiling/)
+>React并不会真正的绑定事件到每一个具体的元素上，而是采用事件代理的模式：在根节点document上为每种事件添加唯一的Listener，然后通过事件的target找到真实的触发元素。这样从触发元素到顶层节点之间的所有节点如果有绑定这个事件，React都会触发对应的事件处理函数。这就是所谓的React模拟事件系统。
+
+JSX语法只是JavaScript语法的一个语法映射.
+
+###在JSX中使用样式
+在JSX中使用样式和真实的样式也很类似，通过style属性来定义，但和真实DOM不同的是，`属性值不能是字符串而必须为对象`，例如：
+
+	<div style={{color: '#ff0000', fontSize: '14px'}}>Hello World.</div>
+
+这段JSX中的大括号是双的，有点奇怪，但实际上里面的大括号只是标准的JavaScript对象表达式，外面的大括号是JSX的语法。所以，样式你也可以先赋值给一个变量，然后传进去，代码会更易读：
+
+	var style = {
+	  color: '#ff0000',
+	  fontSize: '14px'
+	};
+	
+	var node = <div style={style}>HelloWorld.</div>;
+
+**在JSX中可以使用所有的的样式，基本上属性名的转换规范就是将其写成驼峰写法**，例如“background-color”变为“backgroundColor”, “font-size”变为“fontSize”，这和标准的JavaScript操作DOM样式的API是一致的。
+
+###组件的概念和生命周期
+React组件`自身定义了一组props作为对外接口`，展示一个组件时只需要指定props作为XML节点的属性。组件很少需要对外公开方法，唯一的交互途径就是props。这使得使用组件就像使用函数一样简单，给定一个输入，组件给定一个界面输出。当给予的参数一定时，那么输出也是一定的。
+
+虚拟DOM机制,让你可以每次props改变都能以整体刷新页面的思路去考虑界面展现逻辑。
+
+如果整个项目完全采用React，那么界面上就只有一个组件根节点；如果局部使用React，那么每个局部使用的部分都有一个根节点。在Render时，根节点由React.render函数去触发：
+
+	React.render(
+	  <App />,
+	  document.getElementById('react-root')
+	);
+
+而所有的子节点则都是通过父节点的render方法去构造的。每个组件都会有一个render方法，这个方法返回组件的实例，最终整个界面得到一个虚拟DOM树，再由React以最高效的方式展现在界面上。
+
+>除了props之外，组件还有一个很重要的概念：state。组件规范中定义了setState方法，每次调用时都会更新组件的状态，触发render方法。需要注意，`render方法是被异步调用的，这可以保证同步的多个setState方法只会触发一次render，有利于提高性能。`和props不同，state是组件的内部状态，除了初始化时可能由props来决定，之后就完全由组件自身去维护。在组件的整个生命周期中，`React强烈不推荐去修改自身的props，因为这会破坏UI和Model的一致性，props只能够由使用者来决定。`
+
+**shouldComponentUpdate**: **这是一个和性能非常相关的方法**，在每一次render方法之前被调用。它提供了一个机会让你决定是否要对组件进行实际的render。例如：
+
+	shouldComponentUpdate(nextProps, nextState) {
+	  return nextProps.id !== this.props.id;
+	}
+
+当此函数返回false时，组件就不会调用render方法从而避免了虚拟DOM的创建和内存中的Diff比较，从而有助于提高性能。当返回true时，则会进行正常的render的逻辑。
+
+###使用Babel进行JSX编译
+React官方博客发布了[一篇文章](https://facebook.github.io/react/blog/2015/06/12/deprecating-jstransform-and-react-tools.html)，声明其自身用于JSX语法解析的编译器JSTransform已经过期，不再维护，React JS和React Native已经全部采用第三方[Babel](http://babeljs.io/)的JSX编译器实现。原因是两者在功能上已经完全重复，而Babel作为专门的JavaScript语法编译工具，提供了更为强大的功能。
+
+JSX是一种新的语法，浏览器并不能直接运行，因此需要这种翻译器。推荐使用Webpack进行React的开发，要将JSX的编译器从JSTransform切换到Babel非常简单.
+
+首先通过npm安装Babel：
+
+	npm install —save-dev babel-loader
+
+只需稍微改变一下webpack.config.js的配置：
+
+	module: {
+	  loaders: [
+	    { test: /\.jsx?$/, loaders: ['babel-loader']}
+	  ]
+	}
+
+##虚拟DOM Diff算法解析
+
