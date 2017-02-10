@@ -1,15 +1,105 @@
+参考：
+
+[Flux 架构入门教程](http://www.ruanyifeng.com/blog/2016/01/flux.html)
+
+[flux github](https://github.com/facebook/flux)
+
 #Flux
-简单来说，Flux定义了一种单向数据流的方式，来实现View和Model之间的数据流动。
+简单来说，Flux定义了一种单向数据流的方式，来实现View和Model之间的数据流动。Flux 是一种架构思想，专门解决软件的结构问题。它跟MVC 架构是同一类东西，但是更加简单和清晰。
 
 核心都是单向数据流和单向数据绑定。
 
-![](../images/react_Flux_单项数据流.png =600x)
+![](../images/react_Flux_单项数据流.png)
 
 单向数据流详细流程：
 
 ![](../images/react_Flux_单项数据流_详细.png =600x)
 
 在Flux中，View完全是Store的展现形式，Store的更新则完全由Action触发。得益于React的View每次更新都是整体刷新的思路，我们可以完全不必关心Store的变化细节，只需要监听Store的onChange事件，每次变化都触发View的re-render。
+
+##基本概念
+Flux将一个应用分成四个部分。
+
+- View： 视图层
+- Action（动作）：视图层发出的消息（比如mouseClick）
+- Dispatcher（派发器）：用来接收Actions、执行回调函数
+- Store（数据层）：用来存放应用的状态，一旦发生变动，就提醒Views要更新页面
+
+Flux 的最大特点，就是数据的"单向流动"。
+
+- 用户访问 View
+- View 发出用户的 Action
+- Dispatcher 收到 Action，要求 Store 进行相应的更新
+- Store 更新后，发出一个"change"事件
+- View 收到"change"事件后，更新页面
+
+上面过程中，`数据总是"单向流动"，任何相邻的部分都不会发生数据的"双向流动"。`这保证了流程的清晰。
+
+##Action
+每个Action都是一个对象，包含一个actionType属性（说明动作的类型）和一些其他属性（用来传递数据）。
+
+##Dispatcher
+Dispatcher 的作用是将 Action 派发到 Store、。你可以把它看作一个路由器，负责在 View 和 Store 之间，建立 Action 的正确传递路线。注意，`Dispatcher 只能有一个，而且是全局的。`
+
+Facebook官方的 [Dispatcher 实现](https://github.com/facebook/flux)输出一个类，你要写一个[AppDispatcher.js](https://github.com/ruanyf/extremely-simple-flux-demo/blob/master/dispatcher/AppDispatcher.js)，生成 Dispatcher 实例。
+
+
+    // dispatcher/AppDispatcher.js
+    var Dispatcher = require('flux').Dispatcher;
+    module.exports = new Dispatcher();
+
+AppDispatcher.register()方法用来登记各种Action的回调函数。
+
+
+    // dispatcher/AppDispatcher.js
+    var ListStore = require('../stores/ListStore');
+
+    AppDispatcher.register(function (action) {
+      switch(action.actionType) {
+        case 'ADD_NEW_ITEM':
+          ListStore.addNewItemHandler(action.text);
+          ListStore.emitChange();
+          break;
+        default:
+          // no op
+      }
+    })
+
+Dispatcher 只用来派发 Action，不应该有其他逻辑。
+
+##Store
+Store 保存整个应用的状态。它的角色有点像 MVC 架构之中的Model 。
+
+由于 Store 需要在变动后向 View 发送"change"事件，因此它必须实现事件接口。
+
+	// stores/ListStore.js
+	var EventEmitter = require('events').EventEmitter;
+	var assign = require('object-assign');
+	
+	var ListStore = assign({}, EventEmitter.prototype, {
+	  items: [],
+	
+	  getAll: function () {
+	    return this.items;
+	  },
+	
+	  addNewItemHandler: function (text) {
+	    this.items.push(text);
+	  },
+	
+	  emitChange: function () {
+	    this.emit('change');
+	  },
+	
+	  addChangeListener: function(callback) {
+	    this.on('change', callback);
+	  },
+	
+	  removeChangeListener: function(callback) {
+	    this.removeListener('change', callback);
+	  }
+	});
+
 
 ##View和Store
 在Flux架构中，View即React的组件，而Store则存储的是应用程序的状态。
