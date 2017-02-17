@@ -914,11 +914,11 @@ Git会告诉我们，.gitignore的第3行规则忽略了该文件，于是我们
 
 ##其他
 ###下载分支到本地
-`git clone -b [分支name] [分支链接]`
+`git clone -b [分支name] [分支链接] [重命名本地项目名称]`
 
 例：
 
-	git clone -b app_rn_branch git@gitlab.58corp.com:post-fe/app-rn-refactor.git
+	git clone -b app_rn_branch git@gitlab.58corp.com:post-fe/app-rn-refactor.git app_rn_branch
 	
 ###查看远程分支
 
