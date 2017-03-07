@@ -6,7 +6,7 @@
 ###let
 1. let `块级作用域`，let声明的变量只在它所在的`代码块`内有效。
 - let `不存在变量提升`，它所声明的变量一定要在声明后使用，否则报错。
-- let `暂时性死区`，只要块级作用域内存在let命令，它所声明的变量就“绑定”（binding）这个区域，不再受外部的影响。
+- let `暂时性死区`，只要块级作用域内存在let命令，它所声明的变量就“绑定”（binding）这个区域，不再受外部的影响。（typeof不安全）
 - let `不允许重复声明`，let不允许在相同作用域内，重复声明同一个变量。也不能在函数内部重新声明参数。(包括用其他方法声明的同名变量)
 
 注意：
@@ -62,6 +62,8 @@ ES6 允许按照一定模式，从`数组`和`对象`中提取值（只要数据
 
 
 ###数组的解构赋值
+> 只要某种数据结构具有 Iterator 接口，都可以采用数组形式的解构赋值。
+
 **从数组中提取值，按照对应位置，对变量赋值。**
 
 	let [a, b, c] = [1, 2, 3];
@@ -169,9 +171,73 @@ ES6 允许按照一定模式，从`数组`和`对象`中提取值（只要数据
 	s === Boolean.prototype.toString // true
 
 ###函数参数的解构赋值
-undefined就会触发函数参数的默认值。
 
 ###圆括号问题
+
+###解构的用途
+1. 交互变量的值
+
+		let a = 1;
+		let b = 2;
+		[a, b] = [b, a];
+		//a:2 b:1
+
+- 从函数返回多个值
+
+		function multReturn() {
+		    return [1, 2, 3]
+		}
+		let [a,b,c] = multReturn();
+		//a:1 b:2 c:3
+
+- 函数参数的定义
+	
+		function fArr([x,y]) {
+		    console.log("x:" + x, "y:" + y);
+		}
+		fArr([1, 2]); //x:1 y:2
+
+- 函数参数的默认值
+
+		function fArr([x=0,y=0]=[-1, -1]) {
+		    console.log("x:" + x, "y:" + y);
+		}
+		fArr(); //x:-1 y:-1
+		fArr([]); //x:0 y:0
+		fArr([1]); //x:1 y:0
+		fArr([1, 2]); //x:1 y:2
+
+- 提取JSON数据
+
+		let person = {
+		    name: '姓名',
+		    age: '年龄',
+		    sex: '性别'
+		};
+		let {name,age,sex:gender}=person;
+		console.log(name, age, gender);//姓名 年龄 性别
+		
+- 遍历Map结构
+
+		let map = new Map();
+		map.set("key1", "value1");
+		map.set("key2", "value2");
+		
+		for (let [key,value] of map){
+		    console.log(key, value);
+		}
+		
+		for (let [key] of map){
+		    console.log("key:" + key);
+		}
+		
+		for (let [,value] of map){
+		    console.log("value:" + value);
+		}
+
+- 输入模块的指定方法
+
+		const { SourceMapConsumer, SourceNode } = require("source-map");
 
 
 
