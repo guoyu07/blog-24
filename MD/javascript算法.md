@@ -96,3 +96,82 @@ ref:
 - 针对所有的元素重复以上的步骤，除了最后一个；
 - 重复步骤1~3，直到排序完成。
 
+
+
+##js常用算法实现
+###数组
+    /**
+     * 类型判断是否是数组
+     * @param arr
+     * @returns {boolean}
+     */
+    function isArray(arr) {
+        //使用instaceof和construcor,被判断的array必须是在当前页面声明的
+        return (arr && typeof arr === 'object' && Array == arr.constructor) ? true : false;
+    }
+####数组去重
+
+    /**
+     * 数组去重
+     * @param arr
+     * @returns {*}
+     */
+    function arrayRemoveRepeat(arr) {
+        //参数验证,不是数组返回空数组
+        if (!isArray(arr)) {
+            return [];
+        }
+
+        //数组长度为0 返回原数组
+        if (arr.length == 0) {
+            return arr;
+        }
+        //uniqueArr: 去重的结果数组
+        var uniqueArr = [];
+        //tempObj: 辅助临时处理对象
+        var tempObj = {};
+        //去重处理逻辑
+        for (var i = 0; i < arr.length; i++) {
+            var value = arr[i];
+            if (typeof tempObj[value] == 'undefined') {
+                tempObj[value] = value;
+                uniqueArr.push(value);
+            }
+        }
+        return uniqueArr;
+    }    
+    
+####数值数组最大差值
+
+    /**
+     * 数值数组最大差值
+     * @param arr
+     * @returns {*}
+     */
+    function arrayMaxDifference(arr) {
+        //参数验证: 不是数组返回空数组
+        if (!isArray(arr)) {
+            return [];
+        }
+        //参数验证: 数组元素是否为数字, 暂且忽略
+
+        //数组长度为0 返回原数组
+        if (arr.length == 0) {
+            return arr;
+        }
+
+        //最小最大值均默认数组第一个元素
+        var min = arr[0], max = arr[0];
+        for (var i = 0; i < arr.length; i++) {
+            var value = arr[i];
+            if (min > value) {
+                min = value;
+            }
+            if (max < value) {
+                max = value
+            }
+        }
+        var difference = max - min;
+        return difference;
+    }
+
