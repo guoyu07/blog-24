@@ -119,25 +119,31 @@
 
 ##javascript继承方式
 ###一、原型链继承
-	function Parent(name) { 
-	    this.name = name;
-	}
-	Parent.prototype.sayName = function() {
-	    console.log('parent name:', this.name);
-	}
-	function Child(name) {
-	    this.name = name;
-	}
-	
-	Child.prototype = new Parent('father');
-	Child.prototype.constructor = Child;
-	
-	Child.prototype.sayName = function() {
-	    console.log('child name:', this.name);
-	}
-	
-	var child = new Child('son');
-	child.sayName();    // child name: son
+    function Parent(name) {
+      this.name = name;
+      this.colors = ['red', 'yellow', 'blue'];
+    }
+    Parent.prototype.sayName = function () {
+      console.log('parent name:', this.name);
+    };
+    function Child(name) {
+      this.name = name;
+    }
+
+    Child.prototype = new Parent('father');
+    Child.prototype.constructor = Child;
+
+    Child.prototype.sayName = function () {
+      console.log('child name:', this.name);
+    };
+
+    var child = new Child('son');
+    child.sayName();    // child name: son
+    child.colors.push("green");
+    console.log(child.colors.join(","));//red,yellow,blue,green
+
+    var child1 = new Child('son1');
+    console.log(child1.colors.join(","));//red,yellow,blue,green
 	
 只要是原型链中出现过的原型，都可以说是该原型链派生的实例的原型。
 	
@@ -146,9 +152,14 @@
 - 子类型无法给超类型传递参数，在面向对象的继承中，我们总希望通过 var child = new Child('son', 'father'); 让子类去调用父类的构造器来完成继承。而不是通过像这样 new Parent('father') 去调用父类。
 - Child.prototype.sayName 必须写在 Child.prototype = new Parent('father'); 之后，不然就会被覆盖掉。
 
-###二、类式继承
+当Child通过原型链继承了Parent后，Child.prototype就变成了Parent的一个实例，Parent属相colors会被所有实例共享一个，child.colors的修改能通过child1.colors反应出来。
+
+###二、类式继承（借用构造函数）
+在子类型构造函数的内部调用超类构造函数。
+
 	function Parent(name) { 
 	    this.name = name;
+	    this.colors = ['red', 'yellow', 'blue'];
 	}
 	Parent.prototype.sayName = function() {
 	    console.log('parent name:', this.name);
@@ -157,7 +168,7 @@
 	    console.log('parent do something!');
 	}
 	function Child(name, parentName) {
-	    Parent.call(this, parentName);
+	    Parent.call(this, parentName);//继承了Parent
 	    this.name = name;
 	}
 	
@@ -168,16 +179,24 @@
 	var child = new Child('son');
 	child.sayName();      // child name: son
 	child.doSomthing();   // TypeError: child.doSomthing is not a function
+	child.colors.push("green");
+    console.log(child.colors.join(","));//red,yellow,blue,green
+
+    var child1 = new Child('son1');
+    console.log(child1.colors.join(","));//red,yellow,blue
+	
 	
 相当于 Parent 这个函数在 Child 函数中执行了一遍，并且将所有与 this 绑定的变量都切换到了 Child 上，这样就克服了第一种方式带来的问题。
 
 缺点：
 
 - 没有原型，每次创建一个 Child 实例对象时候都需要执行一遍 Parent 函数，无法复用一些公用函数。
+- 在超类型的原型中定义的方法，对子类型是不可见的，如child.doSomthing();会报错。
 
 ###三、组合式继承：前两种方式的结合
 	function Parent(name) { 
 	    this.name = name;
+	    this.colors = ['red', 'yellow', 'blue'];
 	}
 	
 	Parent.prototype.sayName = function() {
@@ -191,16 +210,22 @@
 	    this.name = name;
 	}
 	
+	Child.prototype = new Parent();      
+	Child.prototype.construtor = Child;
+	
 	Child.prototype.sayName = function() {
 	    console.log('child name:', this.name);
 	}
 	
-	Child.prototype = new Parent();      
-	Child.prototype.construtor = Child;
-	
 	var child = new Child('son');
 	child.sayName();       // child name: son
 	child.doSomething();   // parent do something!
+	
+	child.colors.push("green");
+    console.log(child.colors.join(","));//red,yellow,blue,green
+
+    var child1 = new Child('son1');
+    console.log(child1.colors.join(","));//red,yellow,blue
 
 组合式继承是比较常用的一种继承方法，其背后的思路是使用原型链实现对原型属性和方法的继承，而通过借用构造函数来实现对实例属性的继承。
 
@@ -244,7 +269,7 @@ Child.prototype = Parent.prototype;
 
 也就是说我们第一次调用构造函数的时候，其实是不管构造函数里面的内容，所以我们何不 new 一个空函数，将其 prototype 指向 Parent.prototype，代码如下：
 
-###四、寄生组合式继承：
+###四、寄生组合式继承
 
 	function Parent(name) {
 	    this.name = name;
@@ -256,13 +281,13 @@ Child.prototype = Parent.prototype;
 	function Child(name, parentName) {
 	    Parent.call(this, parentName);  
 	    this.name = name;    
-	}
-	
+	}	
+
 	function create(proto) {
 	    function F(){}
-	    F.prototype = proto;
+	    F.prototype =proto
 	    F.prototype.construtor = F;
-	    return new F();
+	    return new F()
 	}
 	
 	Child.prototype = create(Parent.prototype);
@@ -310,6 +335,49 @@ Child.prototype = Parent.prototype;
 	
 	var child = new Child('son', 'father');
 	child.sayName();       // child name: son
+	
+	
+####原型式继承
+
+    var person = {
+      name: 'lala',
+      colors: ['red', 'yellow', 'blue']
+    };
+
+	//本质：clone()对传入其中的对象o执行了一次浅复制
+    function clone(o) {
+      function F() {} //临时构造函数
+      F.prototype = o;//传入的对象作为构造函数的原型，
+      return new F();//返回临时类型的一个新实例
+    }
+
+    var anotherPerson = clone(person);
+    anotherPerson.name='candy';
+    anotherPerson.colors.push('green');
+
+    var yetAnotherPerson = clone(person);
+    yetAnotherPerson.name='linda';
+    yetAnotherPerson.colors.push('pink');
+
+    console.log(person.colors.join(",")); //red,yellow,blue,green,pink
+    console.log(anotherPerson.colors.join(",")); //red,yellow,blue,green,pink
+    console.log(yetAnotherPerson.colors.join(",")); //red,yellow,blue,green,pink
+    
+ 等价于：
+ 
+    var person = {
+      name: 'lala',
+      colors: ['red', 'yellow', 'blue']
+    };
+    
+    var anotherPerson = Object.create(person);
+    anotherPerson.name='candy';
+    anotherPerson.colors.push('green');
+
+    var yetAnotherPerson = Object.create(person);
+    yetAnotherPerson.name='linda';
+    yetAnotherPerson.colors.push('pink');
+
 
 ###五、ES6继承
 
