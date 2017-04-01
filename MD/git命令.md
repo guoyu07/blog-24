@@ -920,6 +920,8 @@ Git会告诉我们，.gitignore的第3行规则忽略了该文件，于是我们
 
 	git clone -b app_rn_branch git@gitlab.58corp.com:post-fe/app-rn-refactor.git app_rn_branch
 	
+
+	git clone -b dev git@gitlab.58corp.com:fangfe/post-pc-house.git post-pc-house-dev	
 ###查看远程分支
 
 	git branch -r
@@ -943,6 +945,18 @@ Git会告诉我们，.gitignore的第3行规则忽略了该文件，于是我们
 	cd /workspace/b_workspace
 	git clone -b dev https://github.com/lunachi/learngit.git
 	
+	
+###合并远程代码到本地
+	#从远程的origin的dev主分支下载最新的版本到origin/dev分支上
+	git fetch origin dev
+	#比较本地的dev分支和origin/dev分支的差别
+	git log -p dev..origin/dev  
+	#进行合并
+	git merge origin/dev
+	#可以把暂存区的修改回退到工作区。当我们用HEAD时，表示最新的版本
+	git reset HEAD readme.txt
+	#丢弃工作区的修改
+	git checkout -- readme.txt
 
 
 
